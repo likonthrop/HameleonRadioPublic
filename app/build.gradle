@@ -1,0 +1,109 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+
+    signingConfigs {
+        release {
+            storeFile file('/Users/Mac/OSProjects/zcor.ru')
+            storePassword '87338733'
+            keyAlias = 'zcor.ru'
+            keyPassword 'Lik128741500!'
+        }
+    }
+
+    defaultConfig {
+        applicationId "com.anisimov.radioonline"
+        minSdkVersion 21
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig = signingConfigs.release
+        }
+        debug {
+            minifyEnabled false
+            shrinkResources false
+        }
+    }
+
+    dataBinding.enabled = true
+
+    flavorDimensions "default"
+
+    productFlavors {
+
+        finalProduction {
+            dimension "default"
+            applicationId "me.fleka.modernandroidapp"
+            resValue "string", "app_name", "Radio Online"
+        }
+
+        demoProduction {
+            dimension "default"
+            applicationId "me.fleka.modernandroidapp.demoproduction"
+            resValue "string", "app_name", "Modern App Demo P"
+        }
+
+        demoTesting {
+            dimension "default"
+            applicationId "me.fleka.modernandroidapp.demotesting"
+            resValue "string", "app_name", "Modern App Demo T"
+        }
+
+        mock {
+            dimension "default"
+            applicationId "me.fleka.modernandroidapp.mock"
+            resValue "string", "app_name", "Modern App Mock"
+        }
+    }
+    compileOptions {
+        sourceCompatibility = "1.8"
+        targetCompatibility = "1.8"
+    }
+}
+
+dependencies {
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    api 'androidx.appcompat:appcompat:1.1.0'
+    api 'androidx.core:core-ktx:1.2.0'
+    api 'androidx.constraintlayout:constraintlayout:1.1.3'
+    api 'androidx.legacy:legacy-support-v4:1.0.0'
+    api 'androidx.dynamicanimation:dynamicanimation:1.0.0'
+    api 'com.google.android.material:material:1.1.0'
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.3"
+
+    testImplementation 'junit:junit:4.13'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+
+    api 'com.intuit.ssp:ssp-android:1.0.6'
+    api 'com.intuit.sdp:sdp-android:1.0.6'
+
+    api 'com.github.bumptech.glide:glide:4.11.0'
+    api 'org.greenrobot:eventbus:3.0.0'
+
+    api 'com.google.android.exoplayer:exoplayer:2.8.2'
+    api 'com.google.android.exoplayer:exoplayer-dash:2.8.2'
+
+    api 'com.sdsmdg.harjot:materialshadows:1.2.5'
+    api 'jp.wasabeef:blurry:3.0.0'
+    api 'com.tompee:circular-viewpager:1.0.0'
+
+    kapt "com.android.databinding:compiler:$gradle_version"
+}

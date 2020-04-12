@@ -1,0 +1,196 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bottomIconColor"
+        android:clickable="true">
+
+        <ImageView
+            android:id="@+id/backGround"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            tools:src="@tools:sample/backgrounds/scenic" />
+
+        <TextView
+            android:id="@+id/stationName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/station_name_style"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.03"
+            tools:text="Название станции" />
+
+        <ImageView
+            android:id="@+id/albumCover"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toTopOf="@+id/playButtonS"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintEnd_toStartOf="@+id/dislikeButtonS"
+            app:layout_constraintStart_toEndOf="@+id/likeButtonS"
+            app:layout_constraintTop_toBottomOf="@+id/stationName"
+            app:layout_constraintVertical_bias="0.1"
+            tools:src="@tools:sample/backgrounds/scenic" />
+
+        <com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper
+            android:id="@+id/likeButtonS"
+            android:layout_width="@dimen/_55sdp"
+            android:layout_height="@dimen/_68sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/albumCover"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/albumCover"
+            app:calculateAsync="false"
+            app:shadowOffsetY="5">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/likeButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_7sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:background="@drawable/ic_like"
+                android:elevation="5dp"
+                app:layout_constraintBottom_toBottomOf="@+id/albumCover"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/albumCover" />
+        </com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper>
+
+
+        <com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper
+            android:id="@+id/dislikeButtonS"
+            android:layout_width="@dimen/_55sdp"
+            android:layout_height="@dimen/_68sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/albumCover"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/albumCover"
+            app:calculateAsync="false"
+            app:shadowOffsetY="5">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/dislikeButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/_7sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:background="@drawable/ic_dislike"
+                android:elevation="5dp"
+                app:layout_constraintBottom_toBottomOf="@+id/albumCover"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/albumCover" />
+        </com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper>
+
+
+        <TextView
+            android:id="@+id/trackName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:textAppearance="@style/station_name_style"
+            android:textSize="@dimen/_16sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/albumCover"
+            tools:text="Название трека" />
+
+        <TextView
+            android:id="@+id/artistName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/station_name_style"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/trackName"
+            tools:text="Исполнитель" />
+
+        <com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper
+            android:id="@+id/backButtonS"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/playButtonS"
+            app:layout_constraintEnd_toStartOf="@+id/playButtonS"
+            app:layout_constraintHorizontal_bias="0.8"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/playButtonS"
+            app:calculateAsync="false"
+            app:shadowOffsetY="5">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/backButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/_10sdp"
+                android:background="@drawable/ic_back"
+                android:elevation="5dp" />
+        </com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper>
+
+        <com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper
+            android:id="@+id/playButtonS"
+            android:layout_width="@dimen/_110sdp"
+            android:layout_height="@dimen/_110sdp"
+            app:layout_constraintBottom_toTopOf="@+id/volumeSeekBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/artistName"
+            app:calculateAsync="false"
+            app:shadowOffsetY="5">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/playButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/_15sdp"
+                android:background="@drawable/ic_play"
+                android:elevation="5dp" />
+        </com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper>
+
+        <com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper
+            android:id="@+id/forwardButtonS"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/playButtonS"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.2"
+            app:layout_constraintStart_toEndOf="@+id/playButtonS"
+            app:layout_constraintTop_toTopOf="@+id/playButtonS"
+            app:calculateAsync="false"
+            app:shadowOffsetY="5">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/forwardButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/_10sdp"
+                android:background="@drawable/ic_forward"
+                android:elevation="5dp" />
+        </com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper>
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/volumeSeekBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:indeterminate="false"
+            android:maxHeight="@dimen/_6sdp"
+            android:progressDrawable="@drawable/seekbar_style"
+            android:thumb="@drawable/custom_thumb"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.96"
+            tools:progress="20" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="backgroundColor">#E5E5E5</color>
+    <color name="colorAccent">#FF4C4D</color>
+    <color name="bottomIconColor">#BDBDBD</color>
+    <color name="bottomMenuItemCheckColor">#4F4F4F</color>
+    <color name="playerButtonColor">#E0E0E0</color>
+    <color name="progressBarColor">#FF8A65</color>
+</resources>
