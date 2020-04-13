@@ -6,11 +6,9 @@
         android:clickable="true"
         android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="more fragment" />
+        <ImageView
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -31,6 +31,7 @@ class PlayerFragment(private val service: RadioService) : Fragment(),
     private lateinit var binding: FragmentPlayerBinding
     private var audio: AudioManager? = null
     private var job: Job? = null
+    private var station: StationModel? = null
 
     private var play: Boolean = false
 
@@ -59,10 +60,11 @@ class PlayerFragment(private val service: RadioService) : Fragment(),
     }
 
     fun fillData(station: StationModel?) {
+        this.station = station
         binding.stationName.text = station?.name
         play = service.isPlaying
         updateSoundInfo(
-            "https://s1.tchkcdn.com/g-0wJ5X7jh3PTvfCy5G3rHKQ/1/373756/660x480/f/0/6f2_snimok_ekrana_2019_03_29_v_12.53.48.png",
+            station?.cover ?: "https://s1.tchkcdn.com/g-0wJ5X7jh3PTvfCy5G3rHKQ/1/373756/660x480/f/0/6f2_snimok_ekrana_2019_03_29_v_12.53.48.png",
             "bad guy",
             "Billie Eilish"
         )
@@ -139,7 +141,12 @@ class PlayerFragment(private val service: RadioService) : Fragment(),
             if (play) R.drawable.ic_pause else R.drawable.ic_play, null
         )
 
-        if (play) job?.cancel()
+        if (play) {
+            service.station?.let {
+                if (it != station) fillData(it)
+            }
+            job?.cancel()
+        }
         else job = makeWhiteAnimation()
     }
 
@@ -166,7 +173,6 @@ class PlayerFragment(private val service: RadioService) : Fragment(),
 
         binding.volumeSeekBar.progress = audio?.getStreamVolume(STREAM_MUSIC) ?: 0
         fillData(service.station)
-//        updateSoundInfo(service.station.cover?:"https://s1.tchkcdn.com/g-0wJ5X7jh3PTvfCy5G3rHKQ/1/373756/660x480/f/0/6f2_snimok_ekrana_2019_03_29_v_12.53.48.png", "Название композиции", "Название артиста")
         showLDButtons(true)
     }
 

@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             ),
             StationModel(
                 8,
-                "Радио Шансое",
+                "Радио Шансон",
                 "https://turbologo.ru/blog/wp-content/uploads/2019/04/shanson.png.webp",
                 link
             ),
