@@ -21,6 +21,5 @@ class ItemStationVH(
         binding.model = item
         binding.progressBar.enable(item.enable)
         item.cover?.let { binding.cover.setImageFromUrl(it)}
-        Log.d("ItemStationVH", "Loading = ${item.loading}")
     }
 }

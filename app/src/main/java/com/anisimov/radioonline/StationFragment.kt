@@ -1,6 +1,7 @@
 package com.anisimov.radioonline
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,11 +18,15 @@ import com.anisimov.radioonline.item.banner.BannerClickListener
 import com.anisimov.radioonline.item.itemhelper.ItemMoveCallback
 import com.anisimov.radioonline.item.models.BannerModel
 import com.anisimov.radioonline.item.models.StationModel
+import com.anisimov.radioonline.item.models.TrackModel
 import com.anisimov.radioonline.radio.OnPlayListener
 import com.anisimov.radioonline.radio.RadioService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.android.synthetic.main.fragment_station.*
+import kotlinx.android.synthetic.main.item_station.*
+import kotlinx.coroutines.*
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.URL
 
 class StationFragment(
     private val service: RadioService,
@@ -31,6 +36,7 @@ class StationFragment(
 
     private lateinit var binding: FragmentStationBinding
     private lateinit var adapter: AGAdapterRV
+    private var trackUpdater: Job? = null
 
     private var touchHelper: ItemTouchHelper? = null
 
@@ -51,6 +57,7 @@ class StationFragment(
 
             adapter.setOnItemClickListener(this)
             binding.recycle.adapter = adapter
+            trackUpdater = makeTrackUpdater()
         }
         return binding.root
     }
@@ -64,11 +71,39 @@ class StationFragment(
     override fun onDestroy() {
         super.onDestroy()
         service.unsubscribe(playListener)
+        trackUpdater?.cancel()
         BannerClickListener.unsubscribe(this)
     }
 
-    fun showUI(show: Boolean) {
-        binding.root.visibility = if (show) View.VISIBLE else View.GONE
+    private fun makeTrackUpdater(): Job {
+        return GlobalScope.launch(Dispatchers.IO) {
+            while (adapter.itemCount > 0) {
+                itemList.forEachIndexed() { i, item ->
+                    (item as? StationModel)?.let { station ->
+                        station.url?.let { url ->
+                            try {
+                                val meta = BufferedReader(InputStreamReader(URL(
+                                    "$url.xspf")
+                                    .openStream())).readLines().toString().replace("amp;", "")
+                                launch(Dispatchers.Main) {
+                                    val metaSplit = meta.substringAfter("<title>").substringBefore("</title>")
+                                        .toLowerCase().split(" - ").map { it.capitalize() }
+                                    if (metaSplit.size == 2) {
+                                        if (item.track == null || item.track!!.artistName != metaSplit[0] || item.track!!.trackName != metaSplit[1]) {
+                                            item.track = TrackModel(metaSplit[0], metaSplit[1], item.cover ?: "")
+                                            adapter.notifyItemChanged(i, item)
+                                        }
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                Log.e(this::class.java.simpleName, e.localizedMessage ?: "")
+                            }
+                        }
+                    }
+                }
+                delay(5000)
+            }
+        }
     }
 
     fun playForward() {
@@ -78,7 +113,7 @@ class StationFragment(
             if (s.current) {
                 s.current = false
                 s.enable = false
-                adapter.notifyItemChanged(i)
+//                adapter.notifyItemChanged(i)
             }
         }
         val pos = if (service.station != null) itemList.indexOf(service.station as Item) else 0
@@ -89,7 +124,7 @@ class StationFragment(
                 if (this !is StationModel) return
                 current = true
                 enable = true
-                adapter.notifyItemChanged(i)
+//                adapter.notifyItemChanged(i)
             }
         } else {
             val i = if (hasBanner) 1 else 0
@@ -98,7 +133,7 @@ class StationFragment(
                 if (this !is StationModel) return
                 current = true
                 enable = true
-                adapter.notifyItemChanged(i)
+//                adapter.notifyItemChanged(i)
             }
         }
     }
@@ -110,7 +145,7 @@ class StationFragment(
             if (s.current) {
                 s.current = false
                 s.enable = false
-                adapter.notifyItemChanged(i)
+//                adapter.notifyItemChanged(i)
             }
         }
         val pos = if (service.station != null) itemList.indexOf(service.station as Item) else 1
@@ -121,7 +156,7 @@ class StationFragment(
                 if (this !is StationModel) return
                 current = true
                 enable = true
-                adapter.notifyItemChanged(i)
+//                adapter.notifyItemChanged(i)
             }
         } else {
             val i = itemList.size - 1
@@ -130,7 +165,7 @@ class StationFragment(
                 if (this !is StationModel) return
                 current = true
                 enable = true
-                adapter.notifyItemChanged(i)
+//                adapter.notifyItemChanged(i)
             }
         }
     }
@@ -142,13 +177,13 @@ class StationFragment(
                 s.current = false
                 s.enable = false
                 s.loading = false
-                adapter.notifyItemChanged(i)
+                adapter.notifyItemChanged(i, s)
             }
         }
 
         if ((itemList[position] as? StationModel)?.enable == true && (itemList[position] as? StationModel)?.loading == false) {
             (itemList[position] as StationModel).enable = false
-            adapter.notifyItemChanged(position)
+//            adapter.notifyItemChanged(position)
             service.pause()
         } else {
             itemList[position].apply {
@@ -156,7 +191,7 @@ class StationFragment(
                 loading = true
                 current = true
             }
-            adapter.notifyItemChanged(position)
+//            adapter.notifyItemChanged(position)
             service.withStation(itemList[position])
         }
 
@@ -169,7 +204,7 @@ class StationFragment(
                 s as? StationModel ?: continue
                 if (s.current) {
                     s.enable = playState
-                    adapter.notifyItemChanged(i)
+                    adapter.notifyItemChanged(i, s)
                 }
             }
         }
@@ -180,7 +215,7 @@ class StationFragment(
                 if (s.current) {
                     s.current = false
                     s.enable = false
-                    adapter.notifyItemChanged(i)
+                    adapter.notifyItemChanged(i, s)
                 }
             }
         }
@@ -190,7 +225,7 @@ class StationFragment(
                 s as? StationModel ?: continue
                 if (s.current || s.loading) {
                     s.loading = inProgress
-                    adapter.notifyItemChanged(i)
+                    adapter.notifyItemChanged(i, s)
                 }
             }
         }

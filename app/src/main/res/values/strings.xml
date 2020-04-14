@@ -5,4 +5,12 @@
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="live_broadcast">On Air</string>
+    <string name="message_in_std">Сообщение в студию</string>
+    <string name="cities">Города</string>
+    <string name="newses">Новости</string>
+    <string name="tickets">Билеты</string>
+    <string name="contacts">Контакты</string>
+    <string name="bag_report">Сообщить о проблеме</string>
+    <string name="shared">Поделиться приложением</string>
+    <string name="station_name_def">Radio Online</string>
 </resources>

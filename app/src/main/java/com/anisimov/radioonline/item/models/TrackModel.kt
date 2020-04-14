@@ -5,7 +5,5 @@ data class TrackModel(
     val trackName: String = "",
     val albumCover: String = ""
 ) {
-    fun getTrackString(): String {
-        return "$trackName - $artistName"
-    }
+    fun getTrackString() = "$artistName - $trackName"
 }

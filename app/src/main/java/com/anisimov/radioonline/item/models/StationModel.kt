@@ -1,7 +1,7 @@
 package com.anisimov.radioonline.item.models
 
-import com.anisimov.radioonline.item.Item
 import com.anisimov.radioonline.item.ITEM_STATION
+import com.anisimov.radioonline.item.Item
 
 data class StationModel(
     var index: Int = 0,

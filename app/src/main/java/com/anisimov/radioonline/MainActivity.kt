@@ -56,68 +56,26 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     fun generateStationList(): ArrayList<Item> {
-        val link = "https://stream.stvradio.online:8010/newradiostv.aac"
+        val link = "https://stream.stvradio.online:8010/nr_reg.aac"
         return arrayListOf(
             StationBanner(generateBannerArray()),
             StationModel(
                 1,
-                "Авто радио",
-                "https://turbologo.ru/blog/wp-content/uploads/2019/04/avtoradio.png.webp",
-                link
+                "Новое Радио",
+                "https://topradio.me/assets/image/radio/180/new-radio.png",
+                "https://player.stvradio.online/radio/8010/newradiostv.aac"
             ),
             StationModel(
                 2,
-                "BBC radio",
-                "https://turbologo.ru/blog/wp-content/uploads/2019/04/bbc.png.webp",
-                link
+                "Европа Плюс",
+                "https://topradio.me/assets/image/radio/180/europa-plus.png",
+                "https://player.stvradio.online/radio/8030/europaplus_bud.aac"
             ),
             StationModel(
                 3,
-                "ESPA radio",
-                "https://turbologo.ru/blog/wp-content/uploads/2019/04/ESPA.png.webp",
-                link
-            ),
-            StationModel(
-                4,
-                "HD radio",
-                "https://turbologo.ru/blog/wp-content/uploads/2019/04/radio.png.webp",
-                link
-            ),
-            StationModel(
-                5,
-                "Radio Olavide",
-                "https://turbologo.ru/blog/wp-content/uploads/2019/04/radiolavide.png.webp",
-                link
-            ),
-            StationModel(
-                6,
-                "RoundHouse radio",
-                "https://turbologo.ru/blog/wp-content/uploads/2019/04/radio98-3.png.webp",
-                link
-            ),
-            StationModel(
-                7,
-                "Русское радио",
-                "https://turbologo.ru/blog/wp-content/uploads/2019/04/russkoyeradio.png.webp",
-                link
-            ),
-            StationModel(
-                8,
-                "Радио Шансон",
-                "https://turbologo.ru/blog/wp-content/uploads/2019/04/shanson.png.webp",
-                link
-            ),
-            StationModel(
-                9,
-                "Vision radio",
-                "https://turbologo.ru/blog/wp-content/uploads/2019/04/vision.png.webp",
-                link
-            ),
-            StationModel(
-                10,
-                "Webmaster radio",
-                "https://turbologo.ru/blog/wp-content/uploads/2019/04/webmasterradio.png.webp",
-                link
+                "Русское Радио",
+                "https://topradio.me/assets/image/radio/180/russkoe.png",
+                "https://player.stvradio.online/radio/8040/rusradio_bud.aac"
             )
         )
     }
@@ -125,20 +83,20 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     private fun generateBannerArray(): Array<BannerModel> {
         return arrayOf(
             BannerModel(
-                "https://turbologo.ru/blog/wp-content/uploads/2019/04/avtoradio.png.webp",
-                "Авто радио"
+                "https://kakzarabativat.ru/wp-content/uploads/2017/01/Chto-takoe-reklama-prostymi-slovami.jpg",
+                "Реклама"
             ),
             BannerModel(
-                "https://turbologo.ru/blog/wp-content/uploads/2019/04/bbc.png.webp",
-                "BBC radio"
+                "https://geniusmarketing.me/wp-content/uploads/2019/02/chuvstva-kotorye-dolzhna-vyzyvat-reklama-fb.png",
+                "Эмоции"
             ),
             BannerModel(
-                "https://turbologo.ru/blog/wp-content/uploads/2019/04/ESPA.png.webp",
-                "ESPA radio"
+                "https://ru.epicstars.com/wp-content/uploads/2018/08/2-2.jpg",
+                "Сотрудничество"
             ),
             BannerModel(
-                "https://turbologo.ru/blog/wp-content/uploads/2019/04/radio.png.webp",
-                "HD radio"
+                "https://fas.gov.ru/system/news/images/000/028/560/announcement_main/lori-0024278137-bigwww.jpg",
+                "Кнопка"
             ),
             BannerModel(
                 "https://www.proreklamu.com/media/upload/news/52138/15582.jpg",

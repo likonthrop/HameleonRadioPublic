@@ -2,8 +2,10 @@ package com.anisimov.radioonline
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.media.AudioManager
-import android.media.AudioManager.*
+import android.media.AudioManager.STREAM_MUSIC
 import android.os.Bundle
 import android.view.*
 import android.view.MotionEvent.ACTION_DOWN
@@ -17,6 +19,8 @@ import com.anisimov.radioonline.databinding.FragmentPlayerBinding
 import com.anisimov.radioonline.item.models.StationModel
 import com.anisimov.radioonline.radio.OnPlayListener
 import com.anisimov.radioonline.radio.RadioService
+import jp.wasabeef.blurry.Blurry
+import kotlinx.android.synthetic.main.item_station.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -54,6 +58,13 @@ class PlayerFragment(private val service: RadioService) : Fragment(),
                     volumeSeekBar.max = it.getStreamMaxVolume(STREAM_MUSIC)
                 }
                 volumeSeekBar.setOnSeekBarChangeListener(this@PlayerFragment)
+                BitmapFactory.decodeResource(resources, R.drawable.ic_logo_bitmap)?.let {
+                    albumCover.setImageBitmap(it)
+                    Blurry.with(context).radius(10).sampling(8)
+                        .color(Color.argb(100, 100, 100, 100))
+                        .async().from(it).into(backGround)
+                }
+
             }
         }
         return binding.root
@@ -61,17 +72,15 @@ class PlayerFragment(private val service: RadioService) : Fragment(),
 
     fun fillData(station: StationModel?) {
         this.station = station
-        binding.stationName.text = station?.name
+        if (!station?.name.isNullOrEmpty()) binding.stationName.text = station?.name
         play = service.isPlaying
-        updateSoundInfo(
-            station?.cover ?: "https://s1.tchkcdn.com/g-0wJ5X7jh3PTvfCy5G3rHKQ/1/373756/660x480/f/0/6f2_snimok_ekrana_2019_03_29_v_12.53.48.png",
-            "bad guy",
-            "Billie Eilish"
-        )
+
+        station?.let {updateSoundInfo(it.cover, it.track?.trackName?:"", it.track?.artistName?:"")}
+
         setPlayState()
     }
 
-    fun updateSoundInfo(cover: String?, track: String, artist: String) {
+    private fun updateSoundInfo(cover: String?, track: String, artist: String) {
         binding.apply {
             albumCover.setImageFromUrl(cover, blurTo = backGround)
             trackName.text = track
@@ -146,8 +155,7 @@ class PlayerFragment(private val service: RadioService) : Fragment(),
                 if (it != station) fillData(it)
             }
             job?.cancel()
-        }
-        else job = makeWhiteAnimation()
+        } else job = makeWhiteAnimation()
     }
 
     private fun makeWhiteAnimation(): Job {

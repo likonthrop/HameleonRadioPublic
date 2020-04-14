@@ -5,27 +5,28 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bottomIconColor"
-        android:clickable="true">
+        android:background="@color/bottomIconColor">
 
         <ImageView
             android:id="@+id/backGround"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            tools:src="@tools:sample/backgrounds/scenic" />
+            tools:src="@tools:sample/backgrounds/scenic"
+            />
 
         <TextView
             android:id="@+id/stationName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/nunito_bold"
+            android:text="@string/station_name_def"
             android:textAppearance="@style/station_name_style"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.03"
-            tools:text="Название станции" />
+            app:layout_constraintVertical_bias="0.03" />
 
         <ImageView
             android:id="@+id/albumCover"
@@ -38,7 +39,8 @@
             app:layout_constraintStart_toEndOf="@+id/likeButtonS"
             app:layout_constraintTop_toBottomOf="@+id/stationName"
             app:layout_constraintVertical_bias="0.1"
-            tools:src="@tools:sample/backgrounds/scenic" />
+            tools:src="@tools:sample/backgrounds/scenic"
+            />
 
         <com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper
             android:id="@+id/likeButtonS"
@@ -94,6 +96,10 @@
             android:id="@+id/trackName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:fontFamily="@font/nunito_semibold"
             android:layout_marginTop="@dimen/_5sdp"
             android:textAppearance="@style/station_name_style"
             android:textSize="@dimen/_16sdp"
@@ -106,6 +112,10 @@
             android:id="@+id/artistName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:fontFamily="@font/nunito"
             android:textAppearance="@style/station_name_style"
             android:textSize="@dimen/_14sdp"
             app:layout_constraintEnd_toEndOf="parent"
