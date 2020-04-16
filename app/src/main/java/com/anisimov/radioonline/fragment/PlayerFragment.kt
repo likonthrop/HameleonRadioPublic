@@ -66,14 +66,13 @@ class PlayerFragment(private val service: RadioService) : Fragment(),
                 }
                 volumeSeekBar.setOnSeekBarChangeListener(this@PlayerFragment)
                 BitmapFactory.decodeResource(resources,
-                    R.drawable.ic_logo_bitmap
+                    R.drawable.ic_logo_placeholder
                 )?.let {
                     albumCover.setImageBitmap(it)
                     Blurry.with(context).radius(10).sampling(8)
                         .color(Color.argb(100, 100, 100, 100))
                         .async().from(it).into(backGround)
                 }
-
             }
             trackUpdater = makeTrackUpdater()
         }

@@ -1,16 +1,18 @@
 package com.anisimov.radioonline.util
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.View.VISIBLE
 import android.widget.ImageView
 import com.anisimov.radioonline.R
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import jp.wasabeef.blurry.Blurry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,30 +33,30 @@ fun ImageView.setImageFromUrl(
         }
         url?.let {
             try {
-                Glide.with(iv).asBitmap().placeholder(R.drawable.ic_launcher_foreground).error(
-                    R.drawable.ic_launcher_foreground
-                ).diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .load(it).override(this@setImageFromUrl.width).into(object : CustomTarget<Bitmap>(){
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        try {
-                            this@setImageFromUrl.setImageBitmap(resource)
-                            if (blurTo != null) {
-                                Blurry.with(context)
-                                    .radius(10)
-                                    .sampling(8)
-                                    .color(Color.argb(100, 100, 100, 100))
-                                    .async()
-                                    .from(resource)
-                                    .into(blurTo)
-                            }
-                        } catch (e: Exception) {
-                            Log.e("ERROR", "err: ${e.localizedMessage}")
-                            setImageFromUrl(url)
+                val requestListener = object : RequestListener<Bitmap> {
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
+                        return false
+                    }
+
+                    override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        resource?.let { initBlur(resource) }
+                        return false
+                    }
+
+                    private fun initBlur(bitmap: Bitmap?) {
+                        if (blurTo != null) {
+                            Blurry.with(context).radius(10).sampling(8)
+                                .color(Color.argb(100, 100, 100, 100))
+                                .async().from(bitmap).into(blurTo)
                         }
                     }
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                    }
-                })
+                }
+
+                Glide.with(iv).asBitmap()
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .listener(requestListener)
+                    .load(it).override(width).into(this@setImageFromUrl)
+
                 visibility = VISIBLE
             } catch (e: Exception) {
                 Log.e("ImageView", "setImageFromUrl: ${e.localizedMessage}")

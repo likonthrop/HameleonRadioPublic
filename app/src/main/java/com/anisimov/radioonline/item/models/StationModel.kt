@@ -32,6 +32,6 @@ data class StationModel(
     }
 
     fun getCover(): String {
-        return "http://player.stvradio.online/static/icons/production/bage_$shortcode.jpg"
+        return "https://player.stvradio.online/static/icons/production/bage_$shortcode.jpg"
     }
 }

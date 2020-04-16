@@ -45,16 +45,13 @@ class StationFragment(
 
     private var touchHelper: ItemTouchHelper? = null
 
-    private var stationInfoFragment: StationInfoFragment? = null
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         if (!::binding.isInitialized) {
-            binding = DataBindingUtil.inflate(inflater,
-                R.layout.fragment_station, container, false)
+            binding = DataBindingUtil.inflate(inflater, R.layout.fragment_station, container, false)
 
             val hasBanner = itemList.any { it.objectType == ITEM_STATION_BANNER }
 

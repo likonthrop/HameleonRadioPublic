@@ -20,18 +20,18 @@ android {
         applicationId "com.anisimov.radioonline"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 4
-        versionName "1.0.3-test"
+        versionCode 5
+        versionName "1.0.5-test"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig = signingConfigs.release
     }
 
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig = signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
             minifyEnabled false
@@ -39,7 +39,7 @@ android {
         }
     }
 
-    dataBinding.enabled = true
+    buildFeatures.dataBinding = true
 
     flavorDimensions "default"
 
@@ -72,12 +72,6 @@ android {
     compileOptions {
         sourceCompatibility = "1.8"
         targetCompatibility = "1.8"
-    }
-}
-
-kotlin {
-    experimental {
-        coroutines 'enable'
     }
 }
 

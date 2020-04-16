@@ -48,10 +48,8 @@ class RadioService : Service(), EventListener, OnAudioFocusChangeListener {
     private lateinit var exoPlayer: SimpleExoPlayer
     var station: StationModel? = null
         private set
-    private lateinit var wifiLock: WifiManager.WifiLock
     private lateinit var handler: Handler
 
-    private var audioManager: AudioManager? = null
     private var strAppName: String? = null
     private var strLiveBroadcast: String? = null
     private var telephonyManager: TelephonyManager? = null
@@ -112,12 +110,7 @@ class RadioService : Service(), EventListener, OnAudioFocusChangeListener {
 
         onGoingCall = false
 
-        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
         notificationManager = MediaNotificationManager(this)
-
-        wifiLock = (applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
-            .createWifiLock(WifiManager.WIFI_MODE_FULL, "mcScPAmpLock")
 
         mediaSession = MediaSessionCompat(this, javaClass.simpleName)
         transportControls = mediaSession.controller.transportControls
@@ -150,9 +143,6 @@ class RadioService : Service(), EventListener, OnAudioFocusChangeListener {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.apply {
             if (TextUtils.isEmpty(action)) return START_NOT_STICKY
-
-            audioManager?.requestAudioFocus(this@RadioService, STREAM_MUSIC, AUDIOFOCUS_GAIN)
-                ?.let { if (it != AUDIOFOCUS_REQUEST_GRANTED) stop(); return@let START_NOT_STICKY }
 
             when (action) {
                 ACTION_PLAY -> transportControls?.play()
@@ -211,18 +201,9 @@ class RadioService : Service(), EventListener, OnAudioFocusChangeListener {
             playWhenReady = false
             playbackState
         }
-        audioManager?.abandonAudioFocus(this)
-        wifiLockRelease()
     }
 
     fun stop() {
-//        if (!::exoPlayer.isInitialized) return
-//        isPlaying = false
-//        exoPlayer.release()
-//        mediaSession.release()
-//        audioManager?.abandonAudioFocus(this)
-//        wifiLockRelease()
-//        subscribes.forEach { it.onStop() }
         pause()
     }
 
@@ -307,11 +288,6 @@ class RadioService : Service(), EventListener, OnAudioFocusChangeListener {
     override fun onTimelineChanged(timeline: Timeline?, manifest: Any?, reason: Int) {}
     override fun onBind(intent: Intent?): IBinder? {
         return iBinder
-    }
-
-
-    private fun wifiLockRelease() {
-        if (wifiLock.isHeld) wifiLock.release()
     }
 
     fun withStation(station: Item) {

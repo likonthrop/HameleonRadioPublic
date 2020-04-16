@@ -126,13 +126,13 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.bottomNavigation.setOnNavigationItemSelectedListener(this)
-        audio = getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
 
     override fun onResume() {
         super.onResume()
         val intent = Intent(this, RadioService::class.java)
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        audio = getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
 
     override fun onDestroy() {

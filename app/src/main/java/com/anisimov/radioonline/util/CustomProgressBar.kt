@@ -3,6 +3,7 @@ package com.anisimov.radioonline.util
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import com.anisimov.radioonline.R
@@ -55,7 +56,9 @@ class CustomProgressBar : View {
             if (pos2 == rndHeight2) rndHeight2 = random.nextInt(5, mHeight.toInt()).toFloat()
             if (pos3 == rndHeight3) rndHeight3 = random.nextInt(5, mHeight.toInt()).toFloat()
 
-            color = resources.getColor(R.color.progressBarColor)
+            color = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                resources.getColor(R.color.progressBarColor, resources.newTheme())
+            } else resources.getColor(R.color.progressBarColor)
             style = Paint.Style.FILL
             isAntiAlias = true
 

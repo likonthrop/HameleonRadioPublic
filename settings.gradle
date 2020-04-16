@@ -1,0 +1,3 @@
+rootProject.name='Radio Online'
+include ':app'
+include ':requester'
