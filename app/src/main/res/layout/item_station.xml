@@ -14,6 +14,7 @@
     </data>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/stationRoot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:background="@color/colorPrimary"
@@ -46,7 +47,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/title"
+                android:id="@+id/stationName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
@@ -61,7 +62,7 @@
                 tools:text="Station name" />
 
             <TextView
-                android:id="@+id/writer"
+                android:id="@+id/trackName"
                 android:layout_marginTop="@dimen/_3sdp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -70,36 +71,67 @@
                 android:marqueeRepeatLimit="marquee_forever"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:text="@{model.track.trackString}"
+                android:text="@{model.song.trackString}"
                 android:textSize="@dimen/_12sdp"
                 tools:text="Composition name" />
 
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/playButton"
-            android:layout_width="@dimen/_25sdp"
-            android:layout_height="@dimen/_25sdp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:src="@drawable/ic_play_station"
-            android:visibility="@{model.showButton() ? View.VISIBLE : View.GONE, default=visible}" />
+        <FrameLayout
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="match_parent"
+            >
 
-        <ProgressBar
-            android:id="@+id/inProgress"
-            android:layout_width="@dimen/_25sdp"
-            android:layout_height="@dimen/_25sdp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:visibility="@{model.loading ? View.VISIBLE : View.GONE, default=gone}" />
+            <ImageView
+                android:id="@+id/playButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerInside"
+                android:scaleX=".6"
+                android:scaleY=".6"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_play_station"
+                android:visibility="@{model.showButton() ? View.VISIBLE : View.GONE, default=visible}" />
 
-        <com.anisimov.radioonline.CustomProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="@dimen/_25sdp"
-            android:layout_height="@dimen/_25sdp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:visibility="@{model.showProgressBar() ? View.VISIBLE : View.GONE, default=gone}" />
+            <ProgressBar
+                android:id="@+id/inProgress"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_gravity="center"
+                android:visibility="@{model.loading ? View.VISIBLE : View.GONE, default=gone}" />
+
+            <ImageView
+                android:id="@+id/pauseButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="true"
+                android:scaleType="centerInside"
+                android:scaleX=".6"
+                android:scaleY=".6"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_pause_station"
+                android:visibility="@{model.showPauseButton() ? View.VISIBLE : View.GONE, default=gone}" />
+
+
+            <FrameLayout
+                android:id="@+id/progressButton"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="@{model.showProgressBar() ? View.VISIBLE : View.GONE, default=gone}"
+                >
+
+                <com.anisimov.radioonline.util.CustomProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_gravity="center"
+                    />
+            </FrameLayout>
+
+        </FrameLayout>
 
     </LinearLayout>
 

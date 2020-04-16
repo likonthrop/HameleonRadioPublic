@@ -14,6 +14,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.media.app.NotificationCompat.MediaStyle
 import com.anisimov.radioonline.MainActivity
 import com.anisimov.radioonline.R
+import kotlinx.coroutines.*
 
 private const val PRIMARY_CHANNEL = "PRIMARY_CHANNEL_ID"
 private const val PRIMARY_CHANNEL_NAME = "Плеер контроллер"
@@ -21,13 +22,31 @@ private const val NOTIFICATION_ID = 555
 
 class MediaNotificationManager(private val service: RadioService) {
 
-    private var strAppName: String = service.resources.getString(R.string.live_broadcast)
-    private var strLiveBroadcast: String = ""
+    private var stationName: String = service.resources.getString(R.string.live_broadcast)
+    private var trackName: String = ""
     private val notificationManager: NotificationManagerCompat = NotificationManagerCompat.from(service)
+    private var trackUpdater = makeTrackUpdater()
+    private var destroy = false
+    private var lastState: String? = null
+
+    private fun makeTrackUpdater(): Job {
+        return GlobalScope.launch(Dispatchers.Main) {
+            while(!destroy) {
+                service.station?.song?.let {
+                    if (it.getTrackString() != trackName){
+                        trackName = it.getTrackString()
+                        if (lastState != null) startNotify(lastState!!)
+                    }
+                }
+                delay(5000)
+            }
+        }
+    }
 
     fun startNotify(playbackStatus: String) {
+        lastState = playbackStatus
         val largeIcon = BitmapFactory.decodeResource(service.resources, R.mipmap.ic_launcher_round)
-        service.station?.let { strAppName = it.name }
+        service.station?.let { stationName = it.name; trackName = it.song?.getTrackString()?:"" }
         var icon = R.drawable.ic_pause_white
         val playbackAction = Intent(service, RadioService::class.java)
         playbackAction.action = ACTION_PAUSE
@@ -58,8 +77,8 @@ class MediaNotificationManager(private val service: RadioService) {
         }
         val builder = Builder(service, PRIMARY_CHANNEL)
             .setAutoCancel(false)
-            .setContentTitle(strAppName)
-            .setContentText(strLiveBroadcast)
+            .setContentTitle(stationName)
+            .setContentText(trackName)
             .setLargeIcon(largeIcon)
             .setContentIntent(pendingIntent)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -79,6 +98,8 @@ class MediaNotificationManager(private val service: RadioService) {
     }
 
     fun cancelNotify() {
+        destroy = true
+        trackUpdater.cancel()
         service.stopForeground(true)
     }
 

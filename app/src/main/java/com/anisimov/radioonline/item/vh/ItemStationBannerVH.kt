@@ -2,7 +2,6 @@ package com.anisimov.radioonline.item.vh
 
 import android.view.MotionEvent
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager.widget.ViewPager
 import com.anisimov.radioonline.item.AGViewHolder

@@ -9,20 +9,18 @@ import com.anisimov.radioonline.R
 import com.anisimov.radioonline.item.models.StationModel
 import com.anisimov.radioonline.item.vh.ItemStationVH
 import com.anisimov.radioonline.item.itemhelper.ItemTouchHelper
+import com.anisimov.radioonline.item.vh.ItemSongVH
 import com.anisimov.radioonline.item.vh.ItemStationBannerVH
 import java.util.*
 
 const val ITEM_STATION = 100
+const val ITEM_SONG = 101
 const val ITEM_STATION_BANNER = 999
 
-class AGAdapterRV(
-    private val objects: List<Item>,
-    private val fm: FragmentManager? = null,
-    private val hasBanner: Boolean = false
-) : Adapter<AGViewHolder>(), ItemTouchHelper {
+class AGAdapterRV(private val objects: List<Item>, private val fm: FragmentManager? = null) : Adapter<AGViewHolder>(), ItemTouchHelper {
 
+    private var onRawMoveListener: OnRawMoveListener? = null
     private var onItemClickListener: OnItemClickListener? = null
-    private var onItemLongClickListener: OnItemLongClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AGViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -42,6 +40,13 @@ class AGAdapterRV(
                     parent,
                     false
                 ), onItemClickListener
+            )
+            ITEM_SONG -> return ItemSongVH(
+                inflater.inflate(
+                    R.layout.item_song,
+                    parent,
+                    false
+                )
             )
         }
         return AGViewHolder(View(parent.context))
@@ -73,20 +78,22 @@ class AGAdapterRV(
         fun onItemLongClick(position: Int, type: Int, v: View?)
     }
 
+    interface OnRawMoveListener {
+        fun onMove()
+    }
+
+    fun setOnRawMove(onRawMoveListener: OnRawMoveListener) {
+        this.onRawMoveListener = onRawMoveListener
+    }
+
     fun setOnItemClickListener(onItemClickListener: OnItemClickListener?) {
         this.onItemClickListener = onItemClickListener
-    }
-
-    fun setOnItemLongClickListener(onItemLongClickListener: OnItemLongClickListener?) {
-        this.onItemLongClickListener = onItemLongClickListener
-    }
-
-    override fun onRowDismiss(position: Int) {
     }
 
     override fun onRowMoved(from: Int, to: Int) {
         Collections.swap(objects, from, to)
         notifyItemMoved(from, to)
         objects.forEachIndexed { i, o -> (o as? StationModel)?.index = i }
+        onRawMoveListener?.onMove()
     }
 }

@@ -1,6 +1,5 @@
 package com.anisimov.radioonline.item
 
-import android.content.Context
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
@@ -13,18 +12,6 @@ open class AGViewHolder : ViewHolder, OnClickListener, OnLongClickListener {
     constructor(itemView: View, onItemClickListener: AGAdapterRV.OnItemClickListener?) : super(itemView) {
         this.onItemClickListener = onItemClickListener
         itemView.setOnClickListener(this)
-    }
-
-    constructor(itemView: View, onItemClickListener: AGAdapterRV.OnItemLongClickListener?) : super(itemView) {
-        onItemLongClickListener = onItemClickListener
-        itemView.setOnLongClickListener(this)
-    }
-
-    constructor(itemView: View, onItemClickListener: AGAdapterRV.OnItemClickListener?, onItemLongClickListener: AGAdapterRV.OnItemLongClickListener?) : super(itemView) {
-        this.onItemClickListener = onItemClickListener
-        this.onItemLongClickListener = onItemLongClickListener
-        itemView.setOnClickListener(this)
-        itemView.setOnLongClickListener(this)
     }
 
     constructor(itemView: View?) : super(itemView!!)

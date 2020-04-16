@@ -20,8 +20,8 @@ android {
         applicationId "com.anisimov.radioonline"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 2
-        versionName "1.0-test"
+        versionCode 4
+        versionName "1.0.3-test"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -47,31 +47,37 @@ android {
 
         finalProduction {
             dimension "default"
-            applicationId "me.fleka.modernandroidapp"
+            applicationId "com.anisimov.radioonline"
             resValue "string", "app_name", "Radio Online"
         }
 
         demoProduction {
             dimension "default"
-            applicationId "me.fleka.modernandroidapp.demoproduction"
+            applicationId "com.anisimov.radioonline.demoproduction"
             resValue "string", "app_name", "Modern App Demo P"
         }
 
         demoTesting {
             dimension "default"
-            applicationId "me.fleka.modernandroidapp.demotesting"
+            applicationId "com.anisimov.radioonline.demotesting"
             resValue "string", "app_name", "Modern App Demo T"
         }
 
         mock {
             dimension "default"
-            applicationId "me.fleka.modernandroidapp.mock"
+            applicationId "com.anisimov.radioonline.mock"
             resValue "string", "app_name", "Modern App Mock"
         }
     }
     compileOptions {
         sourceCompatibility = "1.8"
         targetCompatibility = "1.8"
+    }
+}
+
+kotlin {
+    experimental {
+        coroutines 'enable'
     }
 }
 
@@ -91,7 +97,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-
     api 'com.intuit.ssp:ssp-android:1.0.6'
     api 'com.intuit.sdp:sdp-android:1.0.6'
 
@@ -103,7 +108,8 @@ dependencies {
 
     api 'com.sdsmdg.harjot:materialshadows:1.2.5'
     api 'jp.wasabeef:blurry:3.0.0'
-    api 'com.tompee:circular-viewpager:1.0.0'
 
     kapt "com.android.databinding:compiler:$gradle_version"
+
+    api project(":requester")
 }

@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import com.anisimov.radioonline.item.models.BannerModel
 
 class AGBannerAdapter(fm: FragmentManager, private val itemArray: ArrayList<BannerModel>) :
-    FragmentStatePagerAdapter(fm) {
+    FragmentStatePagerAdapter(fm, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     private var onItemClickListener: OnItemClickListener? = null
 

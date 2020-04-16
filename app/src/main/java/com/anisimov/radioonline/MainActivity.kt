@@ -15,16 +15,29 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.anisimov.radioonline.databinding.ActivityMainBinding
+import com.anisimov.radioonline.fragment.MoreFragment
+import com.anisimov.radioonline.fragment.PlayerFragment
+import com.anisimov.radioonline.fragment.StationFragment
+import com.anisimov.radioonline.interfaces.IOnActivityStateChange
+import com.anisimov.radioonline.interfaces.IOnKeyDownEvent
+import com.anisimov.radioonline.interfaces.IOnKeyDownListener
 import com.anisimov.radioonline.item.Item
 import com.anisimov.radioonline.item.models.BannerModel
 import com.anisimov.radioonline.item.models.StationBanner
 import com.anisimov.radioonline.item.models.StationModel
 import com.anisimov.radioonline.radio.RadioService
+import com.anisimov.requester.HttpResponseCallback
+import com.anisimov.requester.generateModeList
+import com.anisimov.requester.getHttpResponse
+import com.anisimov.requester.models.Station
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener,
-    OnKeyDownEvent {
+    IOnKeyDownEvent {
 
     private lateinit var binding: ActivityMainBinding
     private var serviceBound = false
@@ -38,12 +51,30 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             service = (s as RadioService.LocalBinder).service
             service.let {
                 EventBus.getDefault().post(it.status)
-                addFragment(StationFragment(it, generateStationList()), true)
-                addFragment(PlayerFragment(it))
-                addFragment(MoreFragment())
+
+                getHttpResponse("stations", object : HttpResponseCallback {
+                    override fun onResponse(response: String) {
+                        val stations = generateModeList<Station>(response)
+
+                        CoroutineScope(Dispatchers.Main).launch {
+                            addFragment(
+                                StationFragment(
+                                    it,
+                                    genStations(stations)
+                                ), true)
+                            addFragment(
+                                PlayerFragment(
+                                    it
+                                )
+                            )
+                            addFragment(MoreFragment())
+
+                            binding.bottomNavigation.selectedItemId = R.id.navigation_station
+                        }
+                    }
+                })
             }
 
-            binding.bottomNavigation.selectedItemId = R.id.navigation_station
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -51,33 +82,13 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
     }
 
-    fun showPlayer() {
-        binding.bottomNavigation.menu.getItem(1).isEnabled = true
-    }
-
-    fun generateStationList(): ArrayList<Item> {
-        val link = "https://stream.stvradio.online:8010/nr_reg.aac"
-        return arrayListOf(
-            StationBanner(generateBannerArray()),
-            StationModel(
-                1,
-                "Новое Радио",
-                "https://topradio.me/assets/image/radio/180/new-radio.png",
-                "https://player.stvradio.online/radio/8010/newradiostv.aac"
-            ),
-            StationModel(
-                2,
-                "Европа Плюс",
-                "https://topradio.me/assets/image/radio/180/europa-plus.png",
-                "https://player.stvradio.online/radio/8030/europaplus_bud.aac"
-            ),
-            StationModel(
-                3,
-                "Русское Радио",
-                "https://topradio.me/assets/image/radio/180/russkoe.png",
-                "https://player.stvradio.online/radio/8040/rusradio_bud.aac"
-            )
-        )
+    fun genStations(stationsList: List<Station>): ArrayList<Item> {
+        val st =
+            stationsList.map { StationModel(id = it.id, name = it.name ?: "", shortcode = it.shortcode, url = it.listenUrl, isPublic = it.isPublic, description = it.description) }
+                .toTypedArray()
+        val list = arrayListOf<Item>(StationBanner(generateBannerArray()))
+        list.addAll(st.filter { it.isPublic?: false }.toTypedArray())
+        return list
     }
 
     private fun generateBannerArray(): Array<BannerModel> {
@@ -106,7 +117,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     fun playNext(forward: Boolean) {
-        val f = supportFragmentManager.findFragmentByTag(StationFragment::class.java.simpleName) as StationFragment
+        val f =
+            supportFragmentManager.findFragmentByTag(StationFragment::class.java.simpleName) as StationFragment
         if (forward) f.playForward() else f.playBelow()
     }
 
@@ -137,12 +149,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     override fun onBackPressed() {
-        supportFragmentManager.apply {
-            when (backStackEntryCount) {
-                1 -> finish()
-                2 -> binding.bottomNavigation.selectedItemId = R.id.navigation_station
-            }
-        }
+        supportFragmentManager.fragments.forEach { (it as? IOnActivityStateChange)?.onBackPressed() }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -160,19 +167,20 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             fragments.forEach {
                 if (it::class.java == fragment) beginTransaction().show(it).commit()
                 else beginTransaction().hide(it).commit()
+                (it as? IOnActivityStateChange)?.onHide()
             }
         }
     }
 
-    private val keyDownListenerPool = arrayListOf<OnKeyDownListener>()
+    private val keyDownListenerPool = arrayListOf<IOnKeyDownListener>()
 
-    override fun subscribeOnKeyDownEvent(onKeyDownListener: OnKeyDownListener) {
+    override fun subscribeOnKeyDownEvent(onKeyDownListener: IOnKeyDownListener) {
         if (!keyDownListenerPool.contains(onKeyDownListener)) keyDownListenerPool.add(
             onKeyDownListener
         )
     }
 
-    override fun unsubscribeOnKeyDownListener(onKeyDownListener: OnKeyDownListener) {
+    override fun unsubscribeOnKeyDownListener(onKeyDownListener: IOnKeyDownListener) {
         if (keyDownListenerPool.contains(onKeyDownListener)) keyDownListenerPool.remove(
             onKeyDownListener
         )

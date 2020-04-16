@@ -1,7 +1,7 @@
-package com.anisimov.radioonline
+package com.anisimov.radioonline.interfaces
 
 import android.view.KeyEvent
 
-interface OnKeyDownListener {
+interface IOnKeyDownListener {
         fun onKeyDown(keyCode: Int, event: KeyEvent?)
     }

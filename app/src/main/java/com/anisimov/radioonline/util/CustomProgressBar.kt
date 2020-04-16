@@ -1,10 +1,11 @@
-package com.anisimov.radioonline
+package com.anisimov.radioonline.util
 
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
+import com.anisimov.radioonline.R
 import kotlin.random.Random
 
 class CustomProgressBar : View {

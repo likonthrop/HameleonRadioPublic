@@ -7,8 +7,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
 import android.media.AudioManager.*
-import android.media.MediaMetadataRetriever
-import android.net.NetworkInfo
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Binder
@@ -20,18 +18,13 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.text.TextUtils
-import android.view.Surface
 import com.anisimov.radioonline.BuildConfig
 import com.anisimov.radioonline.item.Item
 import com.anisimov.radioonline.item.models.StationModel
 import com.anisimov.radioonline.radio.PlaybackStatus.*
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.Player.*
-import com.google.android.exoplayer2.analytics.AnalyticsListener
-import com.google.android.exoplayer2.decoder.DecoderCounters
-import com.google.android.exoplayer2.metadata.Metadata
 import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.source.MediaSourceEventListener
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -40,8 +33,6 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import org.greenrobot.eventbus.EventBus
-import java.io.IOException
-import java.lang.Exception
 
 const val ACTION_PLAY = "com.anisimov.radioonline.player.ACTION_PLAY"
 const val ACTION_PAUSE = "com.anisimov.radioonline.player.ACTION_PAUSE"
@@ -241,14 +232,14 @@ class RadioService : Service(), EventListener, OnAudioFocusChangeListener {
             .createMediaSource(uri)
     }
 
-    private val subscribes = arrayListOf<OnPlayListener>()
+    private val subscribes = arrayListOf<IOnPlayListener>()
 
-    fun subscribe(listenerOn: OnPlayListener): RadioService {
+    fun subscribe(listenerOn: IOnPlayListener): RadioService {
         if (!subscribes.contains(listenerOn)) subscribes.add(listenerOn)
         return this
     }
 
-    fun unsubscribe(listenerOn: OnPlayListener) {
+    fun unsubscribe(listenerOn: IOnPlayListener) {
         if (subscribes.contains(listenerOn)) subscribes.remove(listenerOn)
     }
 

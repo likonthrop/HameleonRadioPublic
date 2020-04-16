@@ -8,7 +8,7 @@ import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import com.anisimov.radioonline.R
 import com.anisimov.radioonline.item.models.BannerModel
-import com.anisimov.radioonline.setImageFromUrl
+import com.anisimov.radioonline.util.setImageFromUrl
 
 class AGBannerFragment(private val model: BannerModel, private val onItemClickListener: AGBannerAdapter.OnItemClickListener?, private val position: Int) : Fragment() {
 
