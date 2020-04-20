@@ -4,298 +4,307 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="UnusedAttribute,RtlSymmetry,UseCompoundDrawables,ContentDescription">
 
-    <LinearLayout
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_30sdp" />
+        >
 
         <LinearLayout
-            android:id="@+id/moreItem1"
-            android:clickable="true"
-            android:focusable="true"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:orientation="horizontal"
-            android:padding="@dimen/_10sdp"
-            android:paddingStart="@dimen/_20sdp">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="@dimen/_16sdp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_baseline_chat_24" />
-
-            <TextView
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:fontFamily="@font/nunito"
-                android:gravity="center_vertical"
-                android:text="@string/message_in_std"
-                android:textColor="@color/bottomMenuItemCheckColor"
-                android:textSize="@dimen/_14sdp" />
+                android:layout_height="@dimen/_30sdp" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/moreItem2"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:orientation="horizontal"
-            android:padding="@dimen/_10sdp"
-            android:paddingStart="@dimen/_20sdp">
-
-            <ImageView
-                android:layout_width="@dimen/_16sdp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_baseline_room_24" />
-
-            <TextView
+            <LinearLayout
+                android:id="@+id/moreItem1"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:fontFamily="@font/nunito"
-                android:gravity="center_vertical"
-                android:text="@string/cities"
-                android:textColor="@color/bottomMenuItemCheckColor"
-                android:textSize="@dimen/_14sdp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/moreItem3"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:orientation="horizontal"
-            android:padding="@dimen/_10sdp"
-            android:paddingStart="@dimen/_20sdp">
-
-            <ImageView
-                android:layout_width="@dimen/_16sdp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_baseline_insert_drive_file_24" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:fontFamily="@font/nunito"
-                android:gravity="center_vertical"
-                android:text="@string/newses"
-                android:textColor="@color/bottomMenuItemCheckColor"
-                android:textSize="@dimen/_14sdp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/moreItem4"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:orientation="horizontal"
-            android:padding="@dimen/_10sdp"
-            android:paddingStart="@dimen/_20sdp">
-
-            <ImageView
-                android:layout_width="@dimen/_16sdp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_baseline_confirmation_number_24" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:fontFamily="@font/nunito"
-                android:gravity="center_vertical"
-                android:text="@string/tickets"
-                android:textColor="@color/bottomMenuItemCheckColor"
-                android:textSize="@dimen/_14sdp" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/bottomIconColor" />
-
-        <LinearLayout
-            android:id="@+id/moreItem5"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:orientation="horizontal"
-            android:padding="@dimen/_10sdp"
-            android:paddingStart="@dimen/_20sdp">
-
-            <ImageView
-                android:layout_width="@dimen/_16sdp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_baseline_info_24" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:fontFamily="@font/nunito"
-                android:gravity="center_vertical"
-                android:text="@string/contacts"
-                android:textColor="@color/bottomMenuItemCheckColor"
-                android:textSize="@dimen/_14sdp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/moreItem6"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:orientation="horizontal"
-            android:padding="@dimen/_10sdp"
-            android:paddingStart="@dimen/_20sdp">
-
-            <ImageView
-                android:layout_width="@dimen/_16sdp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_baseline_bug_report_24" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:fontFamily="@font/nunito"
-                android:gravity="center_vertical"
-                android:text="@string/bag_report"
-                android:textColor="@color/bottomMenuItemCheckColor"
-                android:textSize="@dimen/_14sdp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/moreItem7"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:orientation="horizontal"
-            android:padding="@dimen/_10sdp"
-            android:paddingStart="@dimen/_20sdp"
-            >
-
-            <ImageView
-                android:layout_width="@dimen/_16sdp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_baseline_share_24" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:fontFamily="@font/nunito"
-                android:gravity="center_vertical"
-                android:text="@string/shared"
-                android:textColor="@color/bottomMenuItemCheckColor"
-                android:textSize="@dimen/_14sdp" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/bottomIconColor" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_30sdp" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/socialButton1"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
+                android:layout_height="@dimen/_48sdp"
                 android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_vk"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:orientation="horizontal"
+                android:padding="@dimen/_10sdp"
+                android:paddingStart="@dimen/_20sdp">
 
-            <ImageView
-                android:id="@+id/socialButton2"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
+                <ImageView
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_baseline_chat_24" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:fontFamily="@font/nunito"
+                    android:gravity="center_vertical"
+                    android:text="@string/message_in_std"
+                    android:textColor="@color/bottomMenuItemCheckColor"
+                    android:textSize="@dimen/_14sdp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/moreItem2"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_48sdp"
                 android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_facebook"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.3"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:orientation="horizontal"
+                android:padding="@dimen/_10sdp"
+                android:paddingStart="@dimen/_20sdp">
 
-            <ImageView
-                android:id="@+id/socialButton3"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
+                <ImageView
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_baseline_room_24" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:fontFamily="@font/nunito"
+                    android:gravity="center_vertical"
+                    android:text="@string/cities"
+                    android:textColor="@color/bottomMenuItemCheckColor"
+                    android:textSize="@dimen/_14sdp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/moreItem3"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_48sdp"
                 android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_youtube"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:orientation="horizontal"
+                android:padding="@dimen/_10sdp"
+                android:paddingStart="@dimen/_20sdp">
 
-            <ImageView
-                android:id="@+id/socialButton4"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
+                <ImageView
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_baseline_insert_drive_file_24" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:fontFamily="@font/nunito"
+                    android:gravity="center_vertical"
+                    android:text="@string/newses"
+                    android:textColor="@color/bottomMenuItemCheckColor"
+                    android:textSize="@dimen/_14sdp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/moreItem4"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_48sdp"
                 android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_twitter"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.7"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:orientation="horizontal"
+                android:padding="@dimen/_10sdp"
+                android:paddingStart="@dimen/_20sdp">
 
-            <ImageView
-                android:id="@+id/socialButton5"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
+                <ImageView
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_baseline_confirmation_number_24" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:fontFamily="@font/nunito"
+                    android:gravity="center_vertical"
+                    android:text="@string/tickets"
+                    android:textColor="@color/bottomMenuItemCheckColor"
+                    android:textSize="@dimen/_14sdp" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/bottomIconColor" />
+
+            <LinearLayout
+                android:id="@+id/moreItem5"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_48sdp"
                 android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_instagram"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.9"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:orientation="horizontal"
+                android:padding="@dimen/_10sdp"
+                android:paddingStart="@dimen/_20sdp">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageView
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_baseline_info_24" />
 
-    </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:fontFamily="@font/nunito"
+                    android:gravity="center_vertical"
+                    android:text="@string/contacts"
+                    android:textColor="@color/bottomMenuItemCheckColor"
+                    android:textSize="@dimen/_14sdp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/moreItem6"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_48sdp"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:orientation="horizontal"
+                android:padding="@dimen/_10sdp"
+                android:paddingStart="@dimen/_20sdp">
+
+                <ImageView
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_baseline_bug_report_24" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:fontFamily="@font/nunito"
+                    android:gravity="center_vertical"
+                    android:text="@string/bag_report"
+                    android:textColor="@color/bottomMenuItemCheckColor"
+                    android:textSize="@dimen/_14sdp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/moreItem7"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_48sdp"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:orientation="horizontal"
+                android:padding="@dimen/_10sdp"
+                android:paddingStart="@dimen/_20sdp"
+                >
+
+                <ImageView
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_baseline_share_24" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:fontFamily="@font/nunito"
+                    android:gravity="center_vertical"
+                    android:text="@string/shared"
+                    android:textColor="@color/bottomMenuItemCheckColor"
+                    android:textSize="@dimen/_14sdp" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/bottomIconColor" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_30sdp" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/socialButton1"
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_vk"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/socialButton2"
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_facebook"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.3"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/socialButton3"
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_youtube"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/socialButton4"
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_twitter"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.7"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/socialButton5"
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_instagram"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.9"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
 </layout>

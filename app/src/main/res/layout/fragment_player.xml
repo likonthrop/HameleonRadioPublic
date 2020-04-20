@@ -146,8 +146,8 @@
 
         <com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper
             android:id="@+id/playButtonS"
-            android:layout_width="@dimen/_110sdp"
-            android:layout_height="@dimen/_110sdp"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_100sdp"
             app:layout_constraintBottom_toTopOf="@+id/volumeSeekBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
