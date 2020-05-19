@@ -22,13 +22,13 @@ import com.anisimov.radioonline.interfaces.IOnActivityStateChange
 import com.anisimov.radioonline.interfaces.IOnKeyDownEvent
 import com.anisimov.radioonline.interfaces.IOnKeyDownListener
 import com.anisimov.radioonline.item.Item
-import com.anisimov.radioonline.item.models.BannerModel
 import com.anisimov.radioonline.item.models.StationBanner
 import com.anisimov.radioonline.item.models.StationModel
 import com.anisimov.radioonline.radio.RadioService
 import com.anisimov.requester.HttpResponseCallback
-import com.anisimov.requester.generateModeList
+import com.anisimov.requester.generateMode
 import com.anisimov.requester.getHttpResponse
+import com.anisimov.requester.models.Root
 import com.anisimov.requester.models.Station
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.CoroutineScope
@@ -52,9 +52,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             service.let {
                 EventBus.getDefault().post(it.status)
 
-                getHttpResponse("stations", object : HttpResponseCallback {
+                getHttpResponse("", object : HttpResponseCallback {
                     override fun onResponse(response: String) {
-                        val stations = generateModeList<Station>(response)
+                        val stations = generateMode<Root>(response).stations
 
                         CoroutineScope(Dispatchers.Main).launch {
                             addFragment(
@@ -83,37 +83,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     fun genStations(stationsList: List<Station>): ArrayList<Item> {
-        val st =
-            stationsList.map { StationModel(id = it.id, name = it.name ?: "", shortcode = it.shortcode, url = it.listenUrl, isPublic = it.isPublic, description = it.description) }
+        val list = arrayListOf<Item>()
+        val st = stationsList.map { StationModel(id = it.id, name = it.name ?: "", imageUrl = it.imageUrl, link = it.link) }
                 .toTypedArray()
-        val list = arrayListOf<Item>(StationBanner(generateBannerArray()))
-        list.addAll(st.filter { it.isPublic?: false }.toTypedArray())
+        list.addAll(st)
         return list
-    }
-
-    private fun generateBannerArray(): Array<BannerModel> {
-        return arrayOf(
-            BannerModel(
-                "https://kakzarabativat.ru/wp-content/uploads/2017/01/Chto-takoe-reklama-prostymi-slovami.jpg",
-                "Реклама"
-            ),
-            BannerModel(
-                "https://geniusmarketing.me/wp-content/uploads/2019/02/chuvstva-kotorye-dolzhna-vyzyvat-reklama-fb.png",
-                "Эмоции"
-            ),
-            BannerModel(
-                "https://ru.epicstars.com/wp-content/uploads/2018/08/2-2.jpg",
-                "Сотрудничество"
-            ),
-            BannerModel(
-                "https://fas.gov.ru/system/news/images/000/028/560/announcement_main/lori-0024278137-bigwww.jpg",
-                "Кнопка"
-            ),
-            BannerModel(
-                "https://www.proreklamu.com/media/upload/news/52138/15582.jpg",
-                "Radio Olavide"
-            )
-        )
     }
 
     fun playNext(forward: Boolean) {
@@ -162,7 +136,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         return false
     }
 
-    private fun <T> changeFragment(fragment: T) {
+    fun <T> changeFragment(fragment: T) {
         supportFragmentManager.apply {
             fragments.forEach {
                 if (it::class.java == fragment) beginTransaction().show(it).commit()

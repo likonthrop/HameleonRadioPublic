@@ -10,7 +10,7 @@
 
         <variable
             name="model"
-            type="com.anisimov.radioonline.item.models.SongModel" />
+            type="com.anisimov.radioonline.item.models.TrackModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -57,11 +57,11 @@
                     android:scrollHorizontally="true"
                     android:singleLine="true"
                     android:fontFamily="@font/nunito_semibold"
-                    android:text="@{model.artistName}"
+                    android:text="@{model.title}"
                     android:textSize="@dimen/_12sdp"
                     android:textStyle="bold"
                     tools:ignore="NestedWeights"
-                    tools:text="Artist name" />
+                    tools:text="Track name" />
 
                 <TextView
                     android:id="@+id/trackName"
@@ -72,9 +72,9 @@
                     android:marqueeRepeatLimit="marquee_forever"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
-                    android:text="@{model.trackName}"
-                    android:textSize="@dimen/_12sdp"
-                    tools:text="Track name" />
+                    android:text="@{model.artist}"
+                    android:textSize="@dimen/_10sdp"
+                    tools:text="Artist name" />
 
             </LinearLayout>
 

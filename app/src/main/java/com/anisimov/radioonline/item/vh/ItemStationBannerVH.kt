@@ -17,30 +17,34 @@ class ItemStationBannerVH(val view: View, private val fm: FragmentManager?) : AG
     AGBannerAdapter.OnItemClickListener {
 
     private var bannerAnimation: Job? = null
-    private lateinit var bannerAdapter: AGBannerAdapter
+    private var bannerAdapter: AGBannerAdapter? = null
     private lateinit var banner: ViewPager
     private val bannerArray = arrayListOf<BannerModel>()
 
     override fun bind(item: Item, position: Int) {
+        if (bannerAdapter != null) return
         bannerArray.addAll((item as StationBanner).bannerArray)
         banner = view.banner
 
         fm?.let {
-            bannerAdapter = AGBannerAdapter(it, bannerArray)
-            bannerAdapter.setOnItemClickListener(this)
+            try {
+                bannerAdapter = AGBannerAdapter(it, bannerArray)
+                bannerAdapter?.setOnItemClickListener(this)
 
-            banner.apply {
-                visibility = View.VISIBLE
-                adapter = bannerAdapter
-                setOnTouchListener { _, event ->
-                    when (event.action) {
-                        MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> bannerAnimation?.cancel()
-                        MotionEvent.ACTION_UP -> bannerAnimation = runBannerAnimation()
+                banner.apply {
+                    visibility = View.VISIBLE
+                    adapter = bannerAdapter
+                    setOnTouchListener { _, event ->
+                        when (event.action) {
+                            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> bannerAnimation?.cancel()
+                            MotionEvent.ACTION_UP -> bannerAnimation = runBannerAnimation()
+                        }
+                        return@setOnTouchListener false
                     }
-                    return@setOnTouchListener false
                 }
+                bannerAnimation = runBannerAnimation()
+            } catch (e: Exception) {
             }
-            bannerAnimation = runBannerAnimation()
         }
     }
 

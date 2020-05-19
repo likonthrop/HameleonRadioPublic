@@ -22,7 +22,7 @@ class ItemStationVH(val view: View, private val onItemClickListener: AGAdapterRV
             progressButton.setOnClickListener { onItemClickListener?.onItemClick(item.index, item.objectType, it) }
             pauseButton.setOnClickListener { onItemClickListener?.onItemClick(item.index, item.objectType, it) }
             trackName.isSelected = true
-            cover.setImageFromUrl(item.getCover())
+            cover.setImageFromUrl(item.imageUrl)
         }
     }
 }

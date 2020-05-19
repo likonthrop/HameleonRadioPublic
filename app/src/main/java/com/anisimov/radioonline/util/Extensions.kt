@@ -53,7 +53,7 @@ fun ImageView.setImageFromUrl(
                 }
 
                 Glide.with(iv).asBitmap()
-                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .listener(requestListener)
                     .load(it).override(width).into(this@setImageFromUrl)
 

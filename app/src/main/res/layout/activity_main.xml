@@ -23,6 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:itemBackground="@color/colorPrimary"
+            android:background="@color/colorPrimary"
             app:itemIconTint="@drawable/bottom_navigation_foreground"
             app:itemIconSize="@dimen/_25sdp"
             android:elevation="5dp"

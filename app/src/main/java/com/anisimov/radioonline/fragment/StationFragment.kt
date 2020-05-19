@@ -20,17 +20,24 @@ import com.anisimov.radioonline.item.Item
 import com.anisimov.radioonline.item.banner.BannerClickListener
 import com.anisimov.radioonline.item.itemhelper.ItemMoveCallback
 import com.anisimov.radioonline.item.models.BannerModel
+import com.anisimov.radioonline.item.models.StationBanner
 import com.anisimov.radioonline.item.models.StationModel
-import com.anisimov.radioonline.item.models.SongModel
+import com.anisimov.radioonline.item.models.TrackModel
 import com.anisimov.radioonline.radio.IOnPlayListener
 import com.anisimov.radioonline.radio.RadioService
+import com.anisimov.requester.HttpResponseCallback
+import com.anisimov.requester.generateMode
+import com.anisimov.requester.getHttpResponse
+import com.anisimov.requester.models.Root
+import kotlinx.android.synthetic.main.fragment_station.*
 import kotlinx.coroutines.*
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
 import java.util.*
+import kotlin.collections.ArrayList
 
-private const val STATION_TAG = "stationFragment"
+const val STATION_TAG = "stationFragment"
 
 class StationFragment(
     private val service: RadioService,
@@ -110,38 +117,37 @@ class StationFragment(
     private fun makeTrackUpdater(): Job {
         return GlobalScope.launch(Dispatchers.IO) {
             while (adapter.itemCount > 0) {
-                itemList.forEachIndexed { i, item ->
-                    (item as? StationModel)?.let { station ->
-                        station.url?.let { url ->
-                            try {
-                                val meta = BufferedReader(
-                                    InputStreamReader(
-                                        URL("${url.split("?")[0]}.xspf")
-                                            .openStream()
-                                    )
-                                ).readLines().toString().replace("amp;", "")
-                                launch(Dispatchers.Main) {
-                                    val metaSplit =
-                                        meta.substringAfter("<title>").substringBefore("</title>")
-                                            .toLowerCase().split(" - ")
-                                            .map { it.trim().capitalize() }
-                                    if (metaSplit.size == 2) {
-                                        if (item.song == null || item.song!!.artistName != metaSplit[0] || item.song!!.trackName != metaSplit[1]) {
-                                            item.song = SongModel(
-                                                metaSplit[0],
-                                                metaSplit[1],
-                                                item.getCover()
-                                            )
-                                            adapter.notifyItemChanged(i, item)
-                                        }
-                                    }
+                getHttpResponse("/nowPlay", object : HttpResponseCallback {
+                    override fun onResponse(response: String) {
+                        val nowPlay = generateMode<Root>(response).nowplay
+                        CoroutineScope(Dispatchers.Main).launch {
+                            (itemList).filterIsInstance<StationModel>().forEachIndexed {i,it ->
+                                val id = it.id?:0
+                                val track = nowPlay.getTrack(id)
+                                if (!it.equalTrack(track)) {
+                                    it.setTrack(track)
+                                    adapter.notifyItemChanged(i, it)
                                 }
-                            } catch (e: Exception) {
-                                Log.e(this::class.java.simpleName, e.localizedMessage ?: "")
+                            }
+                            itemList.filterIsInstance<StationBanner>().firstOrNull()?.let {
+                                if (it.bannerArray.isEmpty()) {
+                                    it.bannerArray = nowPlay.advertising?.map { b ->
+                                        BannerModel(b.imageUrl?:"",
+                                            b.description?:"") }?: listOf()
+                                    adapter.notifyItemChanged(0, it)
+                                }
+                            }?: run {
+                                if (!nowPlay.advertising.isNullOrEmpty()) {
+                                    itemList.add(0, StationBanner(nowPlay.advertising!!.map { b ->
+                                        BannerModel(b.imageUrl?:"",
+                                            b.description?:"") }))
+                                    adapter.notifyItemInserted(0)
+                                    recycle.smoothScrollToPosition(0)
+                                }
                             }
                         }
                     }
-                }
+                })
                 delay(5000)
             }
         }
@@ -210,43 +216,28 @@ class StationFragment(
     override fun onItemClick(position: Int, type: Int, v: View?) {
         if (v == null) return
         val item = itemList[position] as? StationModel ?: return
-        when (v.id) {
-            R.id.playButton -> {
-                for ((i, s) in itemList.withIndex()) {
-                    s as? StationModel ?: continue
-                    if (i != position && s.current) {
-                        s.current = false
-                        s.enable = false
-                        s.loading = false
-                        adapter.notifyItemChanged(i, s)
-                    }
-                }
 
-                item.apply {
-                    loading = true
-                    current = true
-                }
-
-                service.withStation(item)
+        for ((i, s) in itemList.withIndex()) {
+            s as? StationModel ?: continue
+            if (i != position && s.current) {
+                s.current = false
+                s.enable = false
+                s.loading = false
+                adapter.notifyItemChanged(i, s)
             }
+        }
 
-            R.id.progressButton -> {
-                if (item.enable && !item.loading) {
-                    item.enable = false
-                    service.pause()
-                }
+        if (item.enable && !item.loading) {
+            item.enable = false
+            adapter.notifyItemChanged(position)
+            service.pause()
+        } else {
+            item.apply {
+                loading = true
+                current = true
             }
-
-            R.id.pauseButton -> {
-                if (!item.enable) {
-                    item.enable = true
-                    service.play()
-                }
-            }
-
-            R.id.stationRoot -> {
-                childFragmentManager.beginTransaction().replace(R.id.stationFragmentHolder, StationInfoFragment(item), STATION_TAG).commit()
-            }
+            adapter.notifyItemChanged(position)
+            service.withStation(itemList[position])
         }
     }
 

@@ -4,7 +4,7 @@ import com.anisimov.radioonline.item.ITEM_STATION_BANNER
 import com.anisimov.radioonline.item.Item
 
 data class StationBanner(
-    val bannerArray: Array<BannerModel> = arrayOf()
+    var bannerArray: List<BannerModel> = ArrayList()
 ): Item() {
     override val objectType: Int
         get() = ITEM_STATION_BANNER

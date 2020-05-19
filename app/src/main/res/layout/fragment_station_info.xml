@@ -8,14 +8,13 @@
         <import type="android.view.View"/>
         <variable
             name="model"
-            type="com.anisimov.requester.models.NowPlayingStation" />
+            type="com.anisimov.requester.models.Info" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/backgroundColor"
-        android:clickable="true"
         >
 
         <ProgressBar
@@ -24,6 +23,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            android:elevation="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             android:visibility="@{model == null ? View.VISIBLE : View.GONE, default=gone}"
             />
@@ -33,7 +33,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollY="0dp"
-            android:visibility="@{model.station != null ? View.VISIBLE : View.GONE}"
             >
 
             <LinearLayout
@@ -56,7 +55,7 @@
                     android:layout_height="@dimen/_40sdp"
                     android:gravity="center"
                     android:padding="@dimen/_10sdp"
-                    android:text="@{model.station.name}"
+                    android:text="@{model.name}"
                     tools:text="Название радиостанции"
                     android:fontFamily="@font/nunito_semibold"
                     android:textSize="@dimen/_14sdp" />
@@ -64,7 +63,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:visibility="@{model.hasDescription() ? View.VISIBLE : View.GONE}"
+                    android:visibility="gone"
                     android:background="@color/bottomIconColor" />
 
                 <TextView
@@ -73,8 +72,8 @@
                     android:layout_height="wrap_content"
                     android:padding="@dimen/_15sdp"
                     android:background="@color/colorPrimary"
-                    android:visibility="@{model.hasDescription() ? View.VISIBLE : View.GONE}"
-                    android:text="@{model.station.description}"
+                    android:visibility="gone"
+                    android:text="@{model.description}"
                     tools:text="На волнах «Нового Радио» слушай лучшие проверенные хиты, самые горячие новинки и веселые шоу (STARПерцы, «Светлый Хайп», хит-парад «Высшая лига» и многое другое)."
                     android:fontFamily="@font/nunito"
                     android:textSize="@dimen/_12sdp" />
@@ -82,6 +81,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:visibility="gone"
                     android:background="@color/bottomIconColor" />
 
                 <TextView
@@ -91,6 +91,7 @@
                     android:paddingTop="@dimen/_17sdp"
                     android:paddingBottom="@dimen/_3sdp"
                     android:text="@string/track_history"
+                    android:visibility="gone"
                     android:gravity="center_horizontal|bottom"
                     android:fontFamily="@font/nunito"
                     android:textColor="@color/bottomIconColor"
@@ -99,6 +100,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:visibility="gone"
                     android:background="@color/bottomIconColor" />
 
                 <androidx.recyclerview.widget.RecyclerView

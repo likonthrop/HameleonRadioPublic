@@ -7,6 +7,13 @@
         android:layout_height="match_parent"
         android:background="@color/bottomIconColor">
 
+        <FrameLayout
+            android:id="@+id/stationFragmentHolder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:translationZ="1dp"
+            />
+
         <ImageView
             android:id="@+id/backGround"
             android:layout_width="match_parent"
@@ -48,6 +55,7 @@
             android:layout_height="@dimen/_68sdp"
             app:layout_constraintBottom_toBottomOf="@+id/albumCover"
             app:layout_constraintStart_toStartOf="parent"
+            android:visibility="invisible"
             app:layout_constraintTop_toTopOf="@+id/albumCover"
             app:calculateAsync="false"
             app:shadowOffsetY="5">
@@ -73,6 +81,7 @@
             android:layout_height="@dimen/_68sdp"
             app:layout_constraintBottom_toBottomOf="@+id/albumCover"
             app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="invisible"
             app:layout_constraintTop_toTopOf="@+id/albumCover"
             app:calculateAsync="false"
             app:shadowOffsetY="5">
@@ -102,7 +111,7 @@
             android:fontFamily="@font/nunito_semibold"
             android:layout_marginTop="@dimen/_5sdp"
             android:textAppearance="@style/station_name_style"
-            android:textSize="@dimen/_16sdp"
+            android:textSize="@dimen/_15sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/albumCover"
@@ -117,7 +126,7 @@
             android:singleLine="true"
             android:fontFamily="@font/nunito"
             android:textAppearance="@style/station_name_style"
-            android:textSize="@dimen/_14sdp"
+            android:textSize="@dimen/_12sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/trackName"
@@ -200,7 +209,26 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.96"
+            android:visibility="gone"
             tools:progress="20" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/playlistButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:background="@android:color/transparent"
+            android:textAllCaps="false"
+            android:text="История эфира"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.96"
+            android:fontFamily="@font/nunito"
+            android:textAppearance="@style/station_name_style"
+            android:textSize="@dimen/_10sdp">
+        </androidx.appcompat.widget.AppCompatButton>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

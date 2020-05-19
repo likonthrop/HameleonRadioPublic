@@ -5,10 +5,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.media.AudioManager
 import android.media.AudioManager.*
 import android.net.Uri
-import android.net.wifi.WifiManager
 import android.os.Binder
 import android.os.Handler
 import android.os.IBinder
@@ -183,7 +181,7 @@ class RadioService : Service(), EventListener, OnAudioFocusChangeListener {
         if (!::exoPlayer.isInitialized && station == null) return
 
         isPlaying = true
-        val uri = Uri.parse(station?.url)
+        val uri = Uri.parse(station?.link)
         val mediaSource = extractorMediaSource(uri)
 
 

@@ -18,7 +18,8 @@
 
     <item
         android:id="@+id/navigation_more"
-        android:enabled="true"
+        android:enabled="false"
+        android:visible="false"
         app:showAsAction="ifRoom"
         android:title="@string/bottom_menu_more"
         android:icon="@drawable/ic_bottom_more"/>

@@ -17,12 +17,15 @@ import androidx.dynamicanimation.animation.DynamicAnimation.SCALE_Y
 import androidx.fragment.app.Fragment
 import com.anisimov.radioonline.*
 import com.anisimov.radioonline.databinding.FragmentPlayerBinding
+import com.anisimov.radioonline.interfaces.IOnActivityStateChange
 import com.anisimov.radioonline.interfaces.IOnKeyDownEvent
 import com.anisimov.radioonline.interfaces.IOnKeyDownListener
+import com.anisimov.radioonline.item.models.TrackModel
 import com.anisimov.radioonline.item.models.StationModel
 import com.anisimov.radioonline.radio.IOnPlayListener
 import com.anisimov.radioonline.radio.RadioService
 import com.anisimov.radioonline.util.setImageFromUrl
+import com.anisimov.requester.getSrcFromEntityCoverImage
 import jp.wasabeef.blurry.Blurry
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -33,13 +36,12 @@ import kotlinx.coroutines.Dispatchers as D
 import kotlinx.coroutines.GlobalScope as GS
 
 class PlayerFragment(private val service: RadioService) : Fragment(),
-    SeekBar.OnSeekBarChangeListener,
+    SeekBar.OnSeekBarChangeListener, IOnActivityStateChange,
     IOnKeyDownListener, View.OnTouchListener {
 
     private lateinit var binding: FragmentPlayerBinding
     private var audio: AudioManager? = null
     private var station: StationModel? = null
-    private var job: Job? = null
     private var trackUpdater: Job? = null
     private var destroy = false
 
@@ -52,8 +54,10 @@ class PlayerFragment(private val service: RadioService) : Fragment(),
         savedInstanceState: Bundle?
     ): View? {
         if (!::binding.isInitialized) {
-            binding = DataBindingUtil.inflate(inflater,
-                R.layout.fragment_player, container, false)
+            binding = DataBindingUtil.inflate(
+                inflater,
+                R.layout.fragment_player, container, false
+            )
             audio = context?.getSystemService(Context.AUDIO_SERVICE) as AudioManager
             binding.apply {
                 likeButton.setOnTouchListener(this@PlayerFragment)
@@ -61,11 +65,17 @@ class PlayerFragment(private val service: RadioService) : Fragment(),
                 backButton.setOnTouchListener(this@PlayerFragment)
                 playButton.setOnTouchListener(this@PlayerFragment)
                 forwardButton.setOnTouchListener(this@PlayerFragment)
+                playlistButton.setOnClickListener {
+                    station?.let {
+                        childFragmentManager.beginTransaction().replace(R.id.stationFragmentHolder, StationInfoFragment(it), STATION_TAG).commit()
+                    }
+                }
                 audio?.let {
                     volumeSeekBar.max = it.getStreamMaxVolume(STREAM_MUSIC)
                 }
                 volumeSeekBar.setOnSeekBarChangeListener(this@PlayerFragment)
-                BitmapFactory.decodeResource(resources,
+                BitmapFactory.decodeResource(
+                    resources,
                     R.drawable.ic_logo_placeholder
                 )?.let {
                     albumCover.setImageBitmap(it)
@@ -79,15 +89,16 @@ class PlayerFragment(private val service: RadioService) : Fragment(),
         return binding.root
     }
 
+    var lastStation: TrackModel? = null
+
     private fun makeTrackUpdater(): Job {
         return GS.launch(D.Main) {
-            while(!destroy) {
+            while (!destroy) {
                 station?.let {
-                    updateSoundInfo(
-                        it.getCover(),
-                        it.song?.trackName ?: "",
-                        it.song?.artistName ?: ""
-                    )
+                    if (lastStation != it.track) {
+                        updateSoundInfo(it.track)
+                        lastStation = it.track
+                    }
                 }
                 delay(5000)
             }
@@ -99,16 +110,32 @@ class PlayerFragment(private val service: RadioService) : Fragment(),
         if (!station?.name.isNullOrEmpty()) binding.stationName.text = station?.name
         play = service.isPlaying
 
-        station?.let {updateSoundInfo(it.getCover(), it.song?.trackName?:"", it.song?.artistName?:"")}
+        station?.let { updateSoundInfo(it.track) }
 
         setPlayState()
     }
 
-    private fun updateSoundInfo(cover: String?, track: String, artist: String) {
+    private fun updateSoundInfo(track: TrackModel?) {
         binding.apply {
-            albumCover.setImageFromUrl(cover, blurTo = backGround)
-            trackName.text = track
-            artistName.text = artist
+            track?.let {
+                albumCover.setImageFromUrl(it.cover, blurTo = backGround)
+                trackName.text = it.title
+                artistName.text = it.artist
+            }
+        }
+    }
+
+    override fun onBackPressed() {
+        hideStationInfo()
+    }
+
+    override fun onHide() {
+        hideStationInfo()
+    }
+
+    private fun hideStationInfo() {
+        childFragmentManager.apply {
+            findFragmentByTag(STATION_TAG)?.let { beginTransaction().remove(it).commit() }
         }
     }
 
@@ -178,8 +205,9 @@ class PlayerFragment(private val service: RadioService) : Fragment(),
             service.station?.let {
                 if (it != station) fillData(it)
             }
-            job?.cancel()
-        } else job = makeWhiteAnimation()
+//            job?.cancel()
+        }
+//        else job = makeWhiteAnimation()
     }
 
     private fun makeWhiteAnimation(): Job {

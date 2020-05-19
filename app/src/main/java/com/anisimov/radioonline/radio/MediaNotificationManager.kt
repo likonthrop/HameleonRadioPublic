@@ -33,7 +33,7 @@ class MediaNotificationManager(private val service: RadioService) {
     private fun makeTrackUpdater(): Job {
         return GlobalScope.launch(Dispatchers.Main) {
             while (!destroy) {
-                service.station?.song?.let {
+                service.station?.track?.let {
                     if (it.getTrackString() != trackName) {
                         trackName = it.getTrackString()
                         if (lastState != null) startNotify(lastState!!)
@@ -47,7 +47,7 @@ class MediaNotificationManager(private val service: RadioService) {
     fun startNotify(playbackStatus: String) {
         lastState = playbackStatus
         service.station?.let {
-            stationName = it.name; trackName = it.song?.getTrackString() ?: ""
+            stationName = it.name; trackName = it.track?.getTrackString() ?: ""
         }
         var icon = R.drawable.ic_pause_white
         val playbackAction = Intent(service, RadioService::class.java)
