@@ -1,4 +1,4 @@
-package com.anisimov.radioonline.item
+package com.anisimov.radioonline.item.models
 
 open class Item {
     open val objectType: Int

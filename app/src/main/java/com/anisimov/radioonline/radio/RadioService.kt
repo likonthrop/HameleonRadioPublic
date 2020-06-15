@@ -5,10 +5,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.media.AudioManager
 import android.media.AudioManager.*
 import android.net.Uri
 import android.os.Binder
-import android.os.Handler
 import android.os.IBinder
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
@@ -16,10 +16,13 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.text.TextUtils
-import com.anisimov.radioonline.BuildConfig
-import com.anisimov.radioonline.item.Item
+import com.anisimov.radioonline.item.models.Item
 import com.anisimov.radioonline.item.models.StationModel
-import com.anisimov.radioonline.radio.PlaybackStatus.*
+import com.anisimov.radioonline.radio.PlaybackStatus.IDLE
+import com.anisimov.radioonline.radio.PlaybackStatus.LOADING
+import com.anisimov.radioonline.radio.PlaybackStatus.PAUSED
+import com.anisimov.radioonline.radio.PlaybackStatus.PLAYING
+import com.anisimov.radioonline.radio.PlaybackStatus.STOPPED
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.Player.*
 import com.google.android.exoplayer2.source.ExtractorMediaSource
@@ -46,11 +49,13 @@ class RadioService : Service(), EventListener, OnAudioFocusChangeListener {
     private lateinit var exoPlayer: SimpleExoPlayer
     var station: StationModel? = null
         private set
-    private lateinit var handler: Handler
 
     private var strAppName: String? = null
     private var strLiveBroadcast: String? = null
     private var telephonyManager: TelephonyManager? = null
+    private var manager: AudioManager? = null
+    private var result: Int = 1
+
     private var notificationManager: MediaNotificationManager? = null
     private var transportControls: MediaControllerCompat.TransportControls? = null
 
@@ -126,7 +131,10 @@ class RadioService : Service(), EventListener, OnAudioFocusChangeListener {
         telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         telephonyManager?.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE)
 
-        handler = Handler()
+        manager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        
+        result = manager?.requestAudioFocus(this, STREAM_MUSIC, AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)?:1
+
         val bandwidthMeter = DefaultBandwidthMeter()
         val trackSelectionFactory = AdaptiveTrackSelection.Factory(bandwidthMeter)
         val trackSelector = DefaultTrackSelector(trackSelectionFactory)
@@ -179,16 +187,15 @@ class RadioService : Service(), EventListener, OnAudioFocusChangeListener {
 
     fun play() {
         if (!::exoPlayer.isInitialized && station == null) return
+        if (result == AUDIOFOCUS_REQUEST_GRANTED) {
+            isPlaying = true
+            val uri = Uri.parse(station?.link)
+            val mediaSource = extractorMediaSource(uri)
 
-        isPlaying = true
-        val uri = Uri.parse(station?.link)
-        val mediaSource = extractorMediaSource(uri)
-
-
-
-        exoPlayer.apply {
-            prepare(mediaSource)
-            playWhenReady = true
+            exoPlayer.apply {
+                prepare(mediaSource)
+                playWhenReady = true
+            }
         }
     }
 
@@ -232,6 +239,7 @@ class RadioService : Service(), EventListener, OnAudioFocusChangeListener {
             AUDIOFOCUS_LOSS_TRANSIENT -> if (isPlaying) pause()
             AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> if (isPlaying) exoPlayer.volume = 0.1f
         }
+        result = focusChange
     }
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {

@@ -1,7 +1,6 @@
 package com.anisimov.radioonline.item.models
 
 import com.anisimov.radioonline.item.ITEM_STATION
-import com.anisimov.radioonline.item.Item
 import com.anisimov.requester.models.Track
 
 data class StationModel(
@@ -19,15 +18,11 @@ data class StationModel(
         get() = ITEM_STATION
 
     fun showButton(): Boolean {
-        return loading && !current || !current
+        return loading && !current || !current || loading && current || current && !enable
     }
 
     fun showProgressBar(): Boolean {
         return !loading && current && enable
-    }
-
-    fun showPauseButton(): Boolean {
-        return loading && current || current && !enable
     }
 
     fun equalTrack(t: Track?): Boolean {
@@ -35,10 +30,12 @@ data class StationModel(
         if (track == null) return false
         if (track!!.artist != t.artist) return false
         if (track!!.title != t.title) return false
+        if (track!!.cover != t.imageUrl) return false
         return true
     }
 
     fun setTrack(t: Track?) {
+        if (t?.artist.isNullOrEmpty() || t?.title.isNullOrEmpty() || t?.imageUrl?.endsWith("200x200") == false) t?.imageUrl = imageUrl
         track = TrackModel(t?.imageUrl?:"", t?.artist?:"", t?.title?:"")
     }
 }

@@ -4,6 +4,7 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.anisimov.radioonline.item.models.Item
 
 open class AGViewHolder : ViewHolder, OnClickListener, OnLongClickListener {
     private var onItemClickListener: AGAdapterRV.OnItemClickListener? = null

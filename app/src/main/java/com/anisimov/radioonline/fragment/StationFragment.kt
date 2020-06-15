@@ -1,28 +1,20 @@
 package com.anisimov.radioonline.fragment
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.ItemTouchHelper
+import com.anisimov.radioonline.MainActivity
 import com.anisimov.radioonline.R
 import com.anisimov.radioonline.databinding.FragmentStationBinding
-import com.anisimov.radioonline.interfaces.IOnActivityStateChange
 import com.anisimov.radioonline.item.AGAdapterRV
 import com.anisimov.radioonline.item.ITEM_STATION_BANNER
-import com.anisimov.radioonline.item.Item
 import com.anisimov.radioonline.item.banner.BannerClickListener
-import com.anisimov.radioonline.item.itemhelper.ItemMoveCallback
-import com.anisimov.radioonline.item.models.BannerModel
-import com.anisimov.radioonline.item.models.StationBanner
-import com.anisimov.radioonline.item.models.StationModel
-import com.anisimov.radioonline.item.models.TrackModel
+import com.anisimov.radioonline.item.models.*
 import com.anisimov.radioonline.radio.IOnPlayListener
 import com.anisimov.radioonline.radio.RadioService
 import com.anisimov.requester.HttpResponseCallback
@@ -35,22 +27,18 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
 import java.util.*
-import kotlin.collections.ArrayList
 
 const val STATION_TAG = "stationFragment"
 
 class StationFragment(
     private val service: RadioService,
     private val itemList: ArrayList<Item> = arrayListOf()
-) : Fragment(), IOnActivityStateChange,
-    AGAdapterRV.OnItemClickListener, BannerClickListener.OnItemClickListener,
-    AGAdapterRV.OnRawMoveListener {
+) : Fragment(),
+    AGAdapterRV.OnItemClickListener, BannerClickListener.OnItemClickListener {
 
     private lateinit var binding: FragmentStationBinding
     private lateinit var adapter: AGAdapterRV
     private var trackUpdater: Job? = null
-
-    private var touchHelper: ItemTouchHelper? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,40 +48,12 @@ class StationFragment(
         if (!::binding.isInitialized) {
             binding = DataBindingUtil.inflate(inflater, R.layout.fragment_station, container, false)
 
-            val hasBanner = itemList.any { it.objectType == ITEM_STATION_BANNER }
-
-            val sp = context?.getSharedPreferences("station_position_sp", Context.MODE_PRIVATE)
-            val structure = sp?.getString("structure", null)?.split(",")
-
-            structure?.forEachIndexed { i, o ->
-                val j = if (hasBanner) i + 1 else i
-                if (j < itemList.size) {
-                    val position = itemList.indexOfFirst { (it as? StationModel)?.id == o.toLong() }
-                    if (position == -1) {
-                        structure.drop(j)
-
-                        sp.edit()?.apply {
-                            putString("structure", structure.joinToString(","))
-                            apply()
-                        }
-                    } else {
-                        if (position != j) Collections.swap(itemList, position, j)
-                    }
-                }
-            }
-
-            itemList.forEachIndexed { i, o -> (o as? StationModel)?.index = i }
-
             adapter = AGAdapterRV(
                 itemList,
                 childFragmentManager
             )
 
-            touchHelper = ItemTouchHelper(ItemMoveCallback(adapter))
-            touchHelper?.attachToRecyclerView(binding.recycle)
-
             adapter.setOnItemClickListener(this)
-            adapter.setOnRawMove(this)
             binding.recycle.adapter = adapter
             trackUpdater = makeTrackUpdater()
         }
@@ -115,34 +75,93 @@ class StationFragment(
 
     @SuppressLint("DefaultLocale")
     private fun makeTrackUpdater(): Job {
-        return GlobalScope.launch(Dispatchers.IO) {
+        return GlobalScope.launch(Dispatchers.Main) {
             while (adapter.itemCount > 0) {
-                getHttpResponse("/nowPlay", object : HttpResponseCallback {
+                var request = "/nowPlay"
+                (activity as? MainActivity)?.sp?.getLong("authorize", 0)?.let { id ->
+                    if (id > 0) request += "?request={\"id\":$id}"
+                }
+                getHttpResponse(request, object : HttpResponseCallback {
                     override fun onResponse(response: String) {
-                        val nowPlay = generateMode<Root>(response).nowplay
                         CoroutineScope(Dispatchers.Main).launch {
-                            (itemList).filterIsInstance<StationModel>().forEachIndexed {i,it ->
-                                val id = it.id?:0
+                            val nowPlay = generateMode<Root>(response).nowplay
+                            (itemList).filterIsInstance<StationModel>().forEachIndexed { i, it ->
+                                val id = it.id ?: 0
                                 val track = nowPlay.getTrack(id)
+                                if (track?.artist?.isEmpty() == true && track.title?.isEmpty() == true) {
+                                    adapter.notifyItemRemoved(i)
+                                    itemList.remove(it)
+                                    itemList.forEachIndexed { index, item ->
+                                        (item as? StationModel)?.index = index
+                                    }
+                                    return@forEachIndexed
+                                }
                                 if (!it.equalTrack(track)) {
                                     it.setTrack(track)
                                     adapter.notifyItemChanged(i, it)
                                 }
                             }
-                            itemList.filterIsInstance<StationBanner>().firstOrNull()?.let {
-                                if (it.bannerArray.isEmpty()) {
-                                    it.bannerArray = nowPlay.advertising?.map { b ->
-                                        BannerModel(b.imageUrl?:"",
-                                            b.description?:"") }?: listOf()
-                                    adapter.notifyItemChanged(0, it)
+                            if (itemList[0].objectType == ITEM_STATION_BANNER) {
+                                (itemList[0] as StationBanner).let {
+                                    if (it.bannerArray.isEmpty()) {
+                                        it.bannerArray = nowPlay.advertising?.map { b ->
+                                            BannerModel(
+                                                b.imageUrl ?: "",
+                                                b.description ?: ""
+                                            )
+                                        } ?: listOf()
+                                        adapter.notifyItemChanged(0, it)
+                                    }
                                 }
-                            }?: run {
+                            } else {
                                 if (!nowPlay.advertising.isNullOrEmpty()) {
                                     itemList.add(0, StationBanner(nowPlay.advertising!!.map { b ->
-                                        BannerModel(b.imageUrl?:"",
-                                            b.description?:"") }))
+                                        BannerModel(
+                                            b.imageUrl ?: "",
+                                            b.description ?: ""
+                                        )
+                                    }))
                                     adapter.notifyItemInserted(0)
-                                    recycle.smoothScrollToPosition(0)
+                                    itemList.forEachIndexed { index, item ->
+                                        (item as? StationModel)?.index = index
+                                    }
+                                    recycle.scrollToPosition(0)
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onError(e: String?) {
+                        itemList.forEachIndexed { i, item ->
+                            (item as? StationModel)?.let { station ->
+                                station.link?.let { url ->
+                                    try {
+                                        val meta = BufferedReader(
+                                            InputStreamReader(
+                                                URL("${url.split("?")[0]}.xspf")
+                                                    .openStream()
+                                            )
+                                        ).readLines().toString().replace("amp;", "")
+                                        launch(Dispatchers.Main) {
+                                            val metaSplit =
+                                                meta.substringAfter("<title>")
+                                                    .substringBefore("</title>")
+                                                    .toLowerCase().split(" - ")
+                                                    .map { it.trim().capitalize() }
+                                            if (metaSplit.size == 2) {
+                                                if (item.track == null || item.track!!.artist != metaSplit[0] || item.track!!.title != metaSplit[1]) {
+                                                    item.track = TrackModel(
+                                                        item.imageUrl ?: "",
+                                                        metaSplit[0],
+                                                        metaSplit[1]
+                                                    )
+                                                    adapter.notifyItemChanged(i, item)
+                                                }
+                                            }
+                                        }
+                                    } catch (e: Exception) {
+                                        Log.e(this::class.java.simpleName, e.localizedMessage ?: "")
+                                    }
                                 }
                             }
                         }
@@ -227,31 +246,31 @@ class StationFragment(
             }
         }
 
-        if (item.enable && !item.loading) {
-            item.enable = false
-            adapter.notifyItemChanged(position)
-            service.pause()
-        } else {
-            item.apply {
-                loading = true
-                current = true
+        if (v.id == R.id.stationRoot) {
+            if (item.enable) {
+                (activity as? MainActivity)?.showPlayer()
+            } else {
+                item.apply {
+                    loading = true
+                    current = true
+                }
+                adapter.notifyItemChanged(position)
+                service.withStation(itemList[position])
+                (activity as? MainActivity)?.showPlayer()
             }
-            adapter.notifyItemChanged(position)
-            service.withStation(itemList[position])
-        }
-    }
-
-    override fun onHide() {
-        hideStationInfo()
-    }
-
-    override fun onBackPressed() {
-        hideStationInfo()
-    }
-
-    private fun hideStationInfo() {
-        childFragmentManager.apply {
-            findFragmentByTag(STATION_TAG)?.let { beginTransaction().remove(it).commit() }
+        } else {
+            if (item.enable && !item.loading) {
+                item.enable = false
+                adapter.notifyItemChanged(position)
+                service.pause()
+            } else {
+                item.apply {
+                    loading = true
+                    current = true
+                }
+                adapter.notifyItemChanged(position)
+                service.withStation(itemList[position])
+            }
         }
     }
 
@@ -290,17 +309,7 @@ class StationFragment(
 
     override fun onClick(item: BannerModel, position: Int, v: View?) {
         CoroutineScope(Dispatchers.Main).launch {
-            Toast.makeText(context, item.ling, Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    override fun onMove() {
-        val sp = context?.getSharedPreferences("station_position_sp", Context.MODE_PRIVATE)
-        sp?.edit()?.apply {
-            val structure =
-                itemList.filterIsInstance<StationModel>().map { it.id }.joinToString(",")
-            putString("structure", structure)
-            apply()
+            //            Toast.makeText(context, item.ling, Toast.LENGTH_SHORT).show()
         }
     }
 }

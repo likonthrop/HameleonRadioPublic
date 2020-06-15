@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.Builder
@@ -13,8 +14,9 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.media.app.NotificationCompat.MediaStyle
 import com.anisimov.radioonline.MainActivity
 import com.anisimov.radioonline.R
+import com.anisimov.radioonline.radio.PlaybackStatus.PAUSED
+import com.anisimov.radioonline.util.getBitmapFromUrl
 import kotlinx.coroutines.*
-
 
 private const val PRIMARY_CHANNEL = "PRIMARY_CHANNEL_ID"
 private const val PRIMARY_CHANNEL_NAME = "Плеер контроллер"
@@ -24,19 +26,26 @@ class MediaNotificationManager(private val service: RadioService) {
 
     private var stationName: String = service.resources.getString(R.string.live_broadcast)
     private var trackName: String = ""
+    private var largeIcon: Bitmap? = null
+
     private val notificationManager: NotificationManagerCompat =
         NotificationManagerCompat.from(service)
     private var trackUpdater = makeTrackUpdater()
     private var destroy = false
     private var lastState: String? = null
 
+
     private fun makeTrackUpdater(): Job {
-        return GlobalScope.launch(Dispatchers.Main) {
+        return GlobalScope.launch(Dispatchers.IO) {
             while (!destroy) {
-                service.station?.track?.let {
-                    if (it.getTrackString() != trackName) {
-                        trackName = it.getTrackString()
-                        if (lastState != null) startNotify(lastState!!)
+                service.station?.let {
+                    if (it.track?.getTrackString() != trackName) {
+                        stationName = it.name
+                        largeIcon = getBitmapFromUrl(it.imageUrl)
+                        trackName = it.track?.getTrackString() ?: ""
+                        if (lastState != null) {
+                            launch(Dispatchers.Main) { startNotify(lastState!!) }
+                        }
                     }
                 }
                 delay(5000)
@@ -46,14 +55,11 @@ class MediaNotificationManager(private val service: RadioService) {
 
     fun startNotify(playbackStatus: String) {
         lastState = playbackStatus
-        service.station?.let {
-            stationName = it.name; trackName = it.track?.getTrackString() ?: ""
-        }
         var icon = R.drawable.ic_pause_white
         val playbackAction = Intent(service, RadioService::class.java)
         playbackAction.action = ACTION_PAUSE
         var action = PendingIntent.getService(service, 1, playbackAction, 0)
-        if (playbackStatus == PlaybackStatus.PAUSED) {
+        if (playbackStatus == PAUSED) {
             icon = R.drawable.ic_play_white
             playbackAction.action = ACTION_PLAY
             action = PendingIntent.getService(service, 2, playbackAction, 0)
@@ -79,8 +85,9 @@ class MediaNotificationManager(private val service: RadioService) {
         }
 
         val isLollipopHuawei = (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP_MR1 ||
-                    Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) && Build.MANUFACTURER.equals(
-                "HUAWEI", ignoreCase = true)
+                Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) && Build.MANUFACTURER.equals(
+            "HUAWEI", ignoreCase = true
+        )
 
 
         val builder = if (isLollipopHuawei) {
@@ -93,7 +100,6 @@ class MediaNotificationManager(private val service: RadioService) {
                 .addAction(icon, "pause", action)
                 .addAction(R.drawable.ic_stop_white, "stop", stopAction)
                 .setSmallIcon(R.drawable.ic_baseline_headset_white)
-
         } else {
             Builder(service, PRIMARY_CHANNEL)
                 .setAutoCancel(false)
@@ -102,6 +108,7 @@ class MediaNotificationManager(private val service: RadioService) {
                 .setContentIntent(pendingIntent)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setSmallIcon(R.drawable.ic_baseline_headset_white)
+                .setLargeIcon(largeIcon)
                 .addAction(icon, "pause", action)
                 .addAction(R.drawable.ic_stop_white, "stop", stopAction)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -118,6 +125,9 @@ class MediaNotificationManager(private val service: RadioService) {
         service.startForeground(NOTIFICATION_ID, builder.build())
 
     }
+
+//        val largeIcon = BitmapFactory.decodeResource(service.resources, R.mipmap.ic_launcher)
+
 
     fun cancelNotify() {
         destroy = true

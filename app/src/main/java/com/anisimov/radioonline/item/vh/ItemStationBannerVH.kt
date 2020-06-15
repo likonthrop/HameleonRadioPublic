@@ -5,10 +5,10 @@ import android.view.View
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager.widget.ViewPager
 import com.anisimov.radioonline.item.AGViewHolder
-import com.anisimov.radioonline.item.Item
 import com.anisimov.radioonline.item.banner.AGBannerAdapter
 import com.anisimov.radioonline.item.banner.BannerClickListener
 import com.anisimov.radioonline.item.models.BannerModel
+import com.anisimov.radioonline.item.models.Item
 import com.anisimov.radioonline.item.models.StationBanner
 import kotlinx.android.synthetic.main.item_station_banner.view.*
 import kotlinx.coroutines.*
@@ -53,7 +53,7 @@ class ItemStationBannerVH(val view: View, private val fm: FragmentManager?) : AG
             while (true) {
                 delay(10000)
                 banner.apply {
-                    if (currentItem < childCount - 1) currentItem++ else currentItem = 1
+                    if (currentItem < bannerArray.size - 1) currentItem++ else currentItem = 1
                 }
             }
         }

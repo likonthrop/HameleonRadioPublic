@@ -1,7 +1,6 @@
 package com.anisimov.radioonline.item.models
 
 import com.anisimov.radioonline.item.ITEM_STATION_BANNER
-import com.anisimov.radioonline.item.Item
 
 data class StationBanner(
     var bannerArray: List<BannerModel> = ArrayList()

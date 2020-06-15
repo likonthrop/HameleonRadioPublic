@@ -1,40 +1,45 @@
 package com.anisimov.radioonline
 
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
+import android.content.*
+import android.graphics.Color
 import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.view.KeyEvent
 import android.view.KeyEvent.KEYCODE_VOLUME_DOWN
 import android.view.KeyEvent.KEYCODE_VOLUME_UP
 import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.anisimov.radioonline.databinding.ActivityMainBinding
-import com.anisimov.radioonline.fragment.MoreFragment
 import com.anisimov.radioonline.fragment.PlayerFragment
 import com.anisimov.radioonline.fragment.StationFragment
 import com.anisimov.radioonline.interfaces.IOnActivityStateChange
 import com.anisimov.radioonline.interfaces.IOnKeyDownEvent
 import com.anisimov.radioonline.interfaces.IOnKeyDownListener
-import com.anisimov.radioonline.item.Item
-import com.anisimov.radioonline.item.models.StationBanner
+import com.anisimov.radioonline.item.models.Item
 import com.anisimov.radioonline.item.models.StationModel
 import com.anisimov.radioonline.radio.RadioService
 import com.anisimov.requester.HttpResponseCallback
 import com.anisimov.requester.generateMode
+import com.anisimov.requester.generateModeList
 import com.anisimov.requester.getHttpResponse
 import com.anisimov.requester.models.Root
 import com.anisimov.requester.models.Station
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
+import org.json.JSONObject
+import com.anisimov.requester.r.getHttpResponse as getRHttpResponse
+import com.anisimov.requester.r.models.Station as RStation
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener,
     IOnKeyDownEvent {
@@ -52,7 +57,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             service.let {
                 EventBus.getDefault().post(it.status)
 
-                getHttpResponse("", object : HttpResponseCallback {
+                var request = ""
+                sp?.getLong("authorize", 0)?.let { id ->
+                    if (id > 0) request += "?request={\"id\":$id}"
+                }
+                getHttpResponse(request, object : HttpResponseCallback {
                     override fun onResponse(response: String) {
                         val stations = generateMode<Root>(response).stations
 
@@ -60,17 +69,40 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                             addFragment(
                                 StationFragment(
                                     it,
-                                    genStations(stations)
-                                ), true)
+                                        genStations(stations)
+                                ), true
+                            )
                             addFragment(
                                 PlayerFragment(
                                     it
                                 )
                             )
-                            addFragment(MoreFragment())
-
+                            binding.progressBar.visibility = View.GONE
                             binding.bottomNavigation.selectedItemId = R.id.navigation_station
                         }
+                    }
+
+                    override fun onError(e: String?) {
+                        getRHttpResponse("stations", object : HttpResponseCallback {
+                            override fun onResponse(response: String) {
+                                val stations = generateModeList<RStation>(response)
+
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    addFragment(
+                                        StationFragment(
+                                            it,
+                                            genRStations(stations)
+                                        ), true)
+                                    addFragment(
+                                        PlayerFragment(
+                                            it
+                                        )
+                                    )
+                                    binding.progressBar.visibility = View.GONE
+                                    binding.bottomNavigation.selectedItemId = R.id.navigation_station
+                                }
+                            }
+                        })
                     }
                 })
             }
@@ -82,10 +114,33 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
     }
 
+    private fun genRStations(stationsList: List<RStation>): ArrayList<Item> {
+        val list = arrayListOf<Item>()
+        val st = stationsList.map {
+            StationModel(
+                id = it.id,
+                name = it.name ?: "",
+                imageUrl = "https://player.stvradio.online/static/icons/production/bage_${it.shortcode}.jpg",
+                link = it.listenUrl
+            )
+        }
+            .toTypedArray()
+        list.addAll(st)
+        return list
+    }
+
     fun genStations(stationsList: List<Station>): ArrayList<Item> {
         val list = arrayListOf<Item>()
-        val st = stationsList.map { StationModel(id = it.id, name = it.name ?: "", imageUrl = it.imageUrl, link = it.link) }
-                .toTypedArray()
+        val st = stationsList.mapIndexed { index, it ->
+            StationModel(
+                id = it.id,
+                index = index,
+                name = it.name ?: "",
+                imageUrl = it.imageUrl,
+                link = it.link
+            )
+        }
+            .toTypedArray()
         list.addAll(st)
         return list
     }
@@ -97,10 +152,50 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            window.statusBarColor = Color.BLACK
+        }
         super.onCreate(savedInstanceState)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.bottomNavigation.setOnNavigationItemSelectedListener(this)
+
+        sp = getSharedPreferences("firebase_token", Context.MODE_PRIVATE)
+
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    return@OnCompleteListener
+                }
+                val token = task.result?.token
+                var saveToken = false
+
+                sp?.apply {
+                    val spToken = getString("token", "")
+                    val authorize = getLong("authorize", -1)
+                    if (token != spToken || authorize < 0) {
+                        saveToken = true
+                    }
+                }
+
+                if (saveToken) {
+                    getHttpResponse("/authorize?token=${token}", object : HttpResponseCallback {
+                        override fun onResponse(response: String) {
+                            sp?.edit()?.apply {
+                                    putString("token", token)
+                                    val js = JSONObject(response)
+                                    if (js.has("authorize")) {
+                                        putLong("authorize", js.getLong("authorize"))
+                                    }
+                                    apply()
+                                }
+                        }
+                    })
+                }
+            })
     }
+
+    var sp: SharedPreferences? = null
 
     override fun onResume() {
         super.onResume()
@@ -122,8 +217,18 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
     }
 
+    private var backPressTime = 0L
+    private lateinit var backPressToast: Toast
     override fun onBackPressed() {
-        supportFragmentManager.fragments.forEach { (it as? IOnActivityStateChange)?.onBackPressed() }
+        if (backPressTime + 2000 > System.currentTimeMillis()) {
+            backPressToast.cancel()
+            super.onBackPressed()
+        } else {
+            supportFragmentManager.fragments.forEach { (it as? IOnActivityStateChange)?.onBackPressed() }
+            backPressToast = Toast.makeText(this, "Нажмите еще раз для выхода", Toast.LENGTH_SHORT)
+            backPressToast.show()
+        }
+        backPressTime = System.currentTimeMillis()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -131,9 +236,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         when (item.itemId) {
             R.id.navigation_station -> changeFragment(StationFragment::class.java)
             R.id.navigation_player -> changeFragment(PlayerFragment::class.java)
-            R.id.navigation_more -> changeFragment(MoreFragment::class.java)
+//            R.id.navigation_more -> changeFragment(MoreFragment::class.java)
         }
         return false
+    }
+
+    fun showPlayer() {
+        binding.bottomNavigation.selectedItemId = R.id.navigation_player
+        changeFragment(PlayerFragment::class.java)
     }
 
     fun <T> changeFragment(fragment: T) {

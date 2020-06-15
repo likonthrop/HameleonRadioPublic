@@ -14,4 +14,5 @@
     <string name="shared">Поделиться приложением</string>
     <string name="station_name_def">Radio Online</string>
     <string name="track_history">история эфира</string>
+    <string name="history">Плейлист »</string>
 </resources>

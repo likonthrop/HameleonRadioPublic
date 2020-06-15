@@ -11,7 +11,7 @@
             android:id="@+id/stationFragmentHolder"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:translationZ="1dp"
+            android:translationZ="10dp"
             />
 
         <ImageView
@@ -28,77 +28,35 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/nunito_bold"
             android:text="@string/station_name_def"
+            android:layout_marginTop="@dimen/_10sdp"
             android:textAppearance="@style/station_name_style"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.03" />
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/albumCover"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/albumCoverCV"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:scaleType="centerCrop"
             app:layout_constraintBottom_toTopOf="@+id/playButtonS"
             app:layout_constraintDimensionRatio="1"
-            app:layout_constraintEnd_toStartOf="@+id/dislikeButtonS"
-            app:layout_constraintStart_toEndOf="@+id/likeButtonS"
-            app:layout_constraintTop_toBottomOf="@+id/stationName"
-            app:layout_constraintVertical_bias="0.1"
-            tools:src="@tools:sample/backgrounds/scenic"
-            tools:ignore="ContentDescription" />
-
-        <com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper
-            android:id="@+id/likeButtonS"
-            android:layout_width="@dimen/_55sdp"
-            android:layout_height="@dimen/_68sdp"
-            app:layout_constraintBottom_toBottomOf="@+id/albumCover"
             app:layout_constraintStart_toStartOf="parent"
-            android:visibility="invisible"
-            app:layout_constraintTop_toTopOf="@+id/albumCover"
-            app:calculateAsync="false"
-            app:shadowOffsetY="5">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/likeButton"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_marginEnd="@dimen/_7sdp"
-                android:layout_marginBottom="@dimen/_10sdp"
-                android:background="@drawable/ic_like"
-                android:elevation="5dp"
-                app:layout_constraintBottom_toBottomOf="@+id/albumCover"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/albumCover" />
-        </com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper>
-
-
-        <com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper
-            android:id="@+id/dislikeButtonS"
-            android:layout_width="@dimen/_55sdp"
-            android:layout_height="@dimen/_68sdp"
-            app:layout_constraintBottom_toBottomOf="@+id/albumCover"
             app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="invisible"
-            app:layout_constraintTop_toTopOf="@+id/albumCover"
-            app:calculateAsync="false"
-            app:shadowOffsetY="5">
+            android:layout_marginHorizontal="@dimen/_30sdp"
+            app:cardCornerRadius="@dimen/_7sdp"
+            app:cardBackgroundColor="#666666"
+            app:layout_constraintTop_toBottomOf="@+id/stationName"
+            app:layout_constraintVertical_bias="0.1" >
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/dislikeButton"
+            <ImageView
+                android:id="@+id/albumCover"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/_7sdp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_10sdp"
-                android:background="@drawable/ic_dislike"
-                android:elevation="5dp"
-                app:layout_constraintBottom_toBottomOf="@+id/albumCover"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/albumCover" />
-        </com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper>
+                android:scaleType="centerCrop"
+                tools:src="@tools:sample/backgrounds/scenic"
+                tools:ignore="ContentDescription" />
+
+        </androidx.cardview.widget.CardView>
 
 
         <TextView
@@ -108,13 +66,14 @@
             android:marqueeRepeatLimit="marquee_forever"
             android:scrollHorizontally="true"
             android:singleLine="true"
+            android:paddingHorizontal="@dimen/_20sdp"
             android:fontFamily="@font/nunito_semibold"
             android:layout_marginTop="@dimen/_5sdp"
             android:textAppearance="@style/station_name_style"
             android:textSize="@dimen/_15sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/albumCover"
+            app:layout_constraintTop_toBottomOf="@+id/albumCoverCV"
             tools:text="Название трека" />
 
         <TextView
@@ -124,6 +83,7 @@
             android:marqueeRepeatLimit="marquee_forever"
             android:scrollHorizontally="true"
             android:singleLine="true"
+            android:paddingHorizontal="@dimen/_20sdp"
             android:fontFamily="@font/nunito"
             android:textAppearance="@style/station_name_style"
             android:textSize="@dimen/_12sdp"
@@ -131,68 +91,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/trackName"
             tools:text="Исполнитель" />
-
-        <com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper
-            android:id="@+id/backButtonS"
-            android:layout_width="@dimen/_60sdp"
-            android:layout_height="@dimen/_60sdp"
-            app:layout_constraintBottom_toBottomOf="@+id/playButtonS"
-            app:layout_constraintEnd_toStartOf="@+id/playButtonS"
-            app:layout_constraintHorizontal_bias="0.8"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/playButtonS"
-            app:calculateAsync="false"
-            app:shadowOffsetY="5">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/backButton"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/_10sdp"
-                android:background="@drawable/ic_back"
-                android:elevation="5dp" />
-        </com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper>
-
-        <com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper
-            android:id="@+id/playButtonS"
-            android:layout_width="@dimen/_100sdp"
-            android:layout_height="@dimen/_100sdp"
-            app:layout_constraintBottom_toTopOf="@+id/volumeSeekBar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/artistName"
-            app:calculateAsync="false"
-            app:shadowOffsetY="5">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/playButton"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/_15sdp"
-                android:background="@drawable/ic_play"
-                android:elevation="5dp" />
-        </com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper>
-
-        <com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper
-            android:id="@+id/forwardButtonS"
-            android:layout_width="@dimen/_60sdp"
-            android:layout_height="@dimen/_60sdp"
-            app:layout_constraintBottom_toBottomOf="@+id/playButtonS"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.2"
-            app:layout_constraintStart_toEndOf="@+id/playButtonS"
-            app:layout_constraintTop_toTopOf="@+id/playButtonS"
-            app:calculateAsync="false"
-            app:shadowOffsetY="5">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/forwardButton"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/_10sdp"
-                android:background="@drawable/ic_forward"
-                android:elevation="5dp" />
-        </com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper>
 
         <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/volumeSeekBar"
@@ -204,13 +102,56 @@
             android:maxHeight="@dimen/_6sdp"
             android:progressDrawable="@drawable/seekbar_style"
             android:thumb="@drawable/custom_thumb"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/stationFragmentHolder"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.96"
-            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/artistName"
+            app:layout_constraintVertical_bias="0.07"
             tools:progress="20" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/backButtonS"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            app:cardCornerRadius="@dimen/_18sdp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="@drawable/ic_back"
+            android:backgroundTint="#30000000"
+            app:layout_constraintBottom_toBottomOf="@+id/playButtonS"
+            app:layout_constraintEnd_toStartOf="@+id/playButtonS"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/playButtonS" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/playButtonS"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
+            app:cardCornerRadius="@dimen/_30sdp"
+            android:clickable="true"
+            android:focusable="true"
+            android:backgroundTint="#30000000"
+            android:foreground="@drawable/ic_play"
+            app:layout_constraintBottom_toTopOf="@+id/playlistButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/volumeSeekBar" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/forwardButtonS"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            app:cardCornerRadius="@dimen/_18sdp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="@drawable/ic_forward"
+            android:backgroundTint="#30000000"
+            app:layout_constraintBottom_toBottomOf="@+id/playButtonS"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.3"
+            app:layout_constraintStart_toEndOf="@+id/playButtonS"
+            app:layout_constraintTop_toTopOf="@+id/playButtonS" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/playlistButton"
@@ -219,12 +160,13 @@
             style="@style/Widget.AppCompat.Button.Borderless"
             android:background="@android:color/transparent"
             android:textAllCaps="false"
-            android:text="История эфира"
+            android:text="@string/history"
+            android:paddingHorizontal="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.96"
+            app:layout_constraintVertical_bias="0.99"
             android:fontFamily="@font/nunito"
             android:textAppearance="@style/station_name_style"
             android:textSize="@dimen/_10sdp">

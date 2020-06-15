@@ -1,3 +1,4 @@
-rootProject.name='Radio Online'
+rootProject.name='Hameleon Radio'
 include ':app'
 include ':requester'
+include ':request'

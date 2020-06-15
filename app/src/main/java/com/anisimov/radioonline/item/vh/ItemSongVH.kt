@@ -4,7 +4,7 @@ import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.anisimov.radioonline.databinding.ItemSongBinding
 import com.anisimov.radioonline.item.AGViewHolder
-import com.anisimov.radioonline.item.Item
+import com.anisimov.radioonline.item.models.Item
 import com.anisimov.radioonline.item.models.TrackModel
 import com.anisimov.radioonline.util.setImageFromUrl
 

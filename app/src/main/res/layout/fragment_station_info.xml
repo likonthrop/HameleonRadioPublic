@@ -40,15 +40,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/cover"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_180sdp"
-                    tools:src="@tools:sample/backgrounds/scenic"
-                    tools:visibility="visible"
-                    android:scaleType="centerCrop"
-                    />
-
                 <TextView
                     android:id="@+id/stationName"
                     android:layout_width="match_parent"
