@@ -12,6 +12,7 @@ import com.anisimov.radioonline.databinding.FragmentStationInfoBinding
 import com.anisimov.radioonline.item.AGAdapterRV
 import com.anisimov.radioonline.item.models.TrackModel
 import com.anisimov.radioonline.item.models.StationModel
+import com.anisimov.radioonline.radio.RadioService
 import com.anisimov.radioonline.util.setImageFromUrl
 import com.anisimov.requester.HttpResponseCallback
 import com.anisimov.requester.generateMode
@@ -25,7 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class StationInfoFragment(private val station: StationModel) : Fragment() {
+class StationInfoFragment(private val station: StationModel, private val service: RadioService) : Fragment() {
 
     private lateinit var binding: FragmentStationInfoBinding
 
@@ -37,7 +38,20 @@ class StationInfoFragment(private val station: StationModel) : Fragment() {
         binding.apply {
             model = null
             recycle.adapter = null
-//            cover.setImageDrawable(null)
+            cover.setImageDrawable(null)
+
+            binding.playButton.setOnClickListener {
+                if (service.isPlaying) {
+                    service.pause()
+                    binding.playButton.setImageDrawable(resources.getDrawable(R.drawable.ic_play_station, null))
+                } else {
+                    service.play()
+                    binding.playButton.setImageDrawable(resources.getDrawable(R.drawable.ic_pause_station, null))
+                }
+            }
+
+            binding.trackName.text = station.track?.getTrackString()?: station.name
+
             invalidateAll()
             try {
                 var request = "/info/${station.id}"
@@ -50,7 +64,7 @@ class StationInfoFragment(private val station: StationModel) : Fragment() {
                         CoroutineScope(Dispatchers.Main).launch {
                             nowPlayingStation?.let {
                                 model = it
-//                                cover.setImageFromUrl(station.imageUrl)
+                                cover.setImageFromUrl(station.imageUrl)
                                 val itemList = it.history.map { s -> TrackModel(s) }
                                 adapter = AGAdapterRV(itemList)
                                 recycle.adapter = adapter
@@ -70,7 +84,7 @@ class StationInfoFragment(private val station: StationModel) : Fragment() {
 
                                         launch(Dispatchers.Main) {
                                             model = Info().fromNPS(it)
-//                                            cover.setImageFromUrl(station.imageUrl)
+                                            cover.setImageFromUrl(station.imageUrl)
                                             adapter = AGAdapterRV(itemList)
                                             recycle.adapter = adapter
                                             invalidateAll()

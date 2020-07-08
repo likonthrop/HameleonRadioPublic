@@ -5,7 +5,6 @@ import com.anisimov.requester.models.Track
 
 data class StationModel(
     val id: Long? = 0,
-    var index: Int = 0,
     val name: String = "",
     val imageUrl: String? = null,
     val link: String? = null,

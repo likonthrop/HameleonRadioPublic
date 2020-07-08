@@ -20,7 +20,7 @@ import kotlinx.coroutines.*
 
 private const val PRIMARY_CHANNEL = "PRIMARY_CHANNEL_ID"
 private const val PRIMARY_CHANNEL_NAME = "Плеер контроллер"
-private const val NOTIFICATION_ID = 555
+const val NOTIFICATION_ID = 555
 
 class MediaNotificationManager(private val service: RadioService) {
 
@@ -30,7 +30,7 @@ class MediaNotificationManager(private val service: RadioService) {
 
     private val notificationManager: NotificationManagerCompat =
         NotificationManagerCompat.from(service)
-    private var trackUpdater = makeTrackUpdater()
+    private var trackUpdater: Job? = null
     private var destroy = false
     private var lastState: String? = null
 
@@ -54,6 +54,8 @@ class MediaNotificationManager(private val service: RadioService) {
     }
 
     fun startNotify(playbackStatus: String) {
+        trackUpdater?.cancel()
+        trackUpdater = makeTrackUpdater()
         lastState = playbackStatus
         var icon = R.drawable.ic_pause_white
         val playbackAction = Intent(service, RadioService::class.java)
@@ -88,8 +90,7 @@ class MediaNotificationManager(private val service: RadioService) {
                 Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) && Build.MANUFACTURER.equals(
             "HUAWEI", ignoreCase = true
         )
-
-
+        
         val builder = if (isLollipopHuawei) {
             Builder(service, PRIMARY_CHANNEL)
                 .setAutoCancel(false)
@@ -131,7 +132,7 @@ class MediaNotificationManager(private val service: RadioService) {
 
     fun cancelNotify() {
         destroy = true
-        trackUpdater.cancel()
+        trackUpdater?.cancel()
         service.stopForeground(true)
     }
 }

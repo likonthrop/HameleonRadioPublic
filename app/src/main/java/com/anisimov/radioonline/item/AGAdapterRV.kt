@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.anisimov.radioonline.R
 import com.anisimov.radioonline.item.models.Item
 import com.anisimov.radioonline.item.vh.ItemSongVH
-import com.anisimov.radioonline.item.vh.ItemStationBannerVH
 import com.anisimov.radioonline.item.vh.ItemStationVH
 
 const val ITEM_STATION = 100
@@ -23,15 +22,6 @@ class AGAdapterRV(private val objects: List<Item>, private val fm: FragmentManag
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AGViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         when (viewType) {
-            ITEM_STATION_BANNER -> {
-                return ItemStationBannerVH(
-                    inflater.inflate(
-                        R.layout.item_station_banner,
-                        parent,
-                        false
-                    ), fm
-                )
-            }
             ITEM_STATION -> return ItemStationVH(
                 inflater.inflate(
                     R.layout.item_station,

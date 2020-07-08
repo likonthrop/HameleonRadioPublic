@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -13,6 +14,7 @@ import com.anisimov.radioonline.R
 import com.anisimov.radioonline.databinding.FragmentStationBinding
 import com.anisimov.radioonline.item.AGAdapterRV
 import com.anisimov.radioonline.item.ITEM_STATION_BANNER
+import com.anisimov.radioonline.item.banner.AGBannerAdapter
 import com.anisimov.radioonline.item.banner.BannerClickListener
 import com.anisimov.radioonline.item.models.*
 import com.anisimov.radioonline.radio.IOnPlayListener
@@ -34,11 +36,57 @@ class StationFragment(
     private val service: RadioService,
     private val itemList: ArrayList<Item> = arrayListOf()
 ) : Fragment(),
-    AGAdapterRV.OnItemClickListener, BannerClickListener.OnItemClickListener {
+    AGAdapterRV.OnItemClickListener, BannerClickListener.OnItemClickListener,
+    AGBannerAdapter.OnItemClickListener {
 
     private lateinit var binding: FragmentStationBinding
     private lateinit var adapter: AGAdapterRV
     private var trackUpdater: Job? = null
+
+    private var bannerAnimation: Job? = null
+    private var bannerAdapter: AGBannerAdapter? = null
+    private val bannerArray = arrayListOf<BannerModel>()
+
+    private fun runBannerAnimation(): Job {
+        return GlobalScope.launch(Dispatchers.Main) {
+            while (true) {
+                delay(10000)
+                binding.banner.apply {
+                    if (currentItem < bannerArray.size - 1) currentItem++ else currentItem = 1
+                }
+            }
+        }
+    }
+
+    override fun onItemClick(position: Int, v: View?) {
+        BannerClickListener.onItemClick(bannerArray[position], position, v)
+    }
+
+    fun bindBanner(banner: StationBanner) {
+        if (bannerAdapter != null) return
+        bannerArray.addAll(banner.bannerArray)
+        childFragmentManager.let {
+            try {
+                bannerAdapter = AGBannerAdapter(it, bannerArray)
+                bannerAdapter?.setOnItemClickListener(this)
+
+                binding.banner.apply {
+                    visibility = View.VISIBLE
+                    adapter = bannerAdapter
+                    setOnTouchListener { _, event ->
+                        when (event.action) {
+                            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> bannerAnimation?.cancel()
+                            MotionEvent.ACTION_UP -> bannerAnimation = runBannerAnimation()
+                        }
+                        return@setOnTouchListener false
+                    }
+                }
+                bannerAnimation = runBannerAnimation()
+            } catch (e: Exception) {
+            }
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -88,45 +136,22 @@ class StationFragment(
                             (itemList).filterIsInstance<StationModel>().forEachIndexed { i, it ->
                                 val id = it.id ?: 0
                                 val track = nowPlay.getTrack(id)
-                                if (track?.artist?.isEmpty() == true && track.title?.isEmpty() == true) {
-                                    adapter.notifyItemRemoved(i)
-                                    itemList.remove(it)
-                                    itemList.forEachIndexed { index, item ->
-                                        (item as? StationModel)?.index = index
-                                    }
-                                    return@forEachIndexed
-                                }
                                 if (!it.equalTrack(track)) {
                                     it.setTrack(track)
                                     adapter.notifyItemChanged(i, it)
                                 }
                             }
-                            if (itemList[0].objectType == ITEM_STATION_BANNER) {
-                                (itemList[0] as StationBanner).let {
-                                    if (it.bannerArray.isEmpty()) {
-                                        it.bannerArray = nowPlay.advertising?.map { b ->
-                                            BannerModel(
-                                                b.imageUrl ?: "",
-                                                b.description ?: ""
-                                            )
-                                        } ?: listOf()
-                                        adapter.notifyItemChanged(0, it)
-                                    }
-                                }
-                            } else {
-                                if (!nowPlay.advertising.isNullOrEmpty()) {
-                                    itemList.add(0, StationBanner(nowPlay.advertising!!.map { b ->
+
+                            if (!nowPlay.advertising.isNullOrEmpty()) {
+                                val stationBanner =
+                                    StationBanner(nowPlay.advertising!!.map { b ->
                                         BannerModel(
                                             b.imageUrl ?: "",
                                             b.description ?: ""
                                         )
-                                    }))
-                                    adapter.notifyItemInserted(0)
-                                    itemList.forEachIndexed { index, item ->
-                                        (item as? StationModel)?.index = index
-                                    }
-                                    recycle.scrollToPosition(0)
-                                }
+                                    })
+                                bindBanner(stationBanner)
+                                binding.banner.visibility = View.VISIBLE
                             }
                         }
                     }

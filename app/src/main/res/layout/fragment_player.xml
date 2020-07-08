@@ -95,7 +95,7 @@
         <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/volumeSeekBar"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_30sdp"
             android:layout_marginStart="@dimen/_20sdp"
             android:layout_marginEnd="@dimen/_20sdp"
             android:indeterminate="false"
@@ -106,7 +106,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/artistName"
-            app:layout_constraintVertical_bias="0.07"
+            app:layout_constraintVertical_bias="0.05"
             tools:progress="20" />
 
         <androidx.cardview.widget.CardView

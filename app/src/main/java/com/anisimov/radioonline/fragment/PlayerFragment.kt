@@ -26,6 +26,7 @@ import com.anisimov.radioonline.radio.RadioService
 import com.anisimov.radioonline.util.setImageFromUrl
 import com.anisimov.requester.getSrcFromEntityCoverImage
 import jp.wasabeef.blurry.Blurry
+import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers as D
 import kotlinx.coroutines.GlobalScope as GS
@@ -41,6 +42,8 @@ class PlayerFragment(private val service: RadioService) : Fragment(),
     private var destroy = false
 
     private var play: Boolean = false
+
+    var showInfo = false
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
@@ -62,9 +65,10 @@ class PlayerFragment(private val service: RadioService) : Fragment(),
                     station?.let {
                         childFragmentManager.beginTransaction().replace(
                             R.id.stationFragmentHolder,
-                            StationInfoFragment(it),
+                            StationInfoFragment(it, service),
                             STATION_TAG
                         ).commit()
+                        showInfo = true
                     }
                 }
                 audio?.let {
@@ -121,9 +125,11 @@ class PlayerFragment(private val service: RadioService) : Fragment(),
         binding.apply {
             track?.let {
                 albumCover.setImageFromUrl(
+                    station?.imageUrl,
+                    blurTo = backGround)
+                albumCover.setImageFromUrl(
                     it.cover.replace("200x200", "400x400"),
-                    blurTo = backGround,
-                    placeholder = station?.imageUrl?:""
+                    blurTo = backGround
                 )
                 trackName.text = it.title
                 artistName.text = it.artist
@@ -142,6 +148,7 @@ class PlayerFragment(private val service: RadioService) : Fragment(),
     private fun hideStationInfo() {
         childFragmentManager.apply {
             findFragmentByTag(STATION_TAG)?.let { beginTransaction().remove(it).commit() }
+            showInfo = false
         }
     }
 

@@ -21,8 +21,8 @@ android {
         applicationId "com.anisimov.radioonline"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 15
-        versionName '1.0.15-release'
+        versionCode 17
+        versionName '1.0.17-release'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig = signingConfigs.release

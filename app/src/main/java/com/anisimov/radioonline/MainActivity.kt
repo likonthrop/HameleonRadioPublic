@@ -13,6 +13,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.anisimov.radioonline.databinding.ActivityMainBinding
@@ -23,6 +24,7 @@ import com.anisimov.radioonline.interfaces.IOnKeyDownEvent
 import com.anisimov.radioonline.interfaces.IOnKeyDownListener
 import com.anisimov.radioonline.item.models.Item
 import com.anisimov.radioonline.item.models.StationModel
+import com.anisimov.radioonline.radio.NOTIFICATION_ID
 import com.anisimov.radioonline.radio.RadioService
 import com.anisimov.requester.HttpResponseCallback
 import com.anisimov.requester.generateMode
@@ -48,6 +50,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     private var serviceBound = false
     private lateinit var service: RadioService
     private var audio: AudioManager? = null
+    private lateinit var playerFragment: PlayerFragment
 
     private val serviceConnection = object : ServiceConnection {
 
@@ -72,10 +75,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                                         genStations(stations)
                                 ), true
                             )
+                            playerFragment = PlayerFragment(it)
                             addFragment(
-                                PlayerFragment(
-                                    it
-                                )
+                                playerFragment
                             )
                             binding.progressBar.visibility = View.GONE
                             binding.bottomNavigation.selectedItemId = R.id.navigation_station
@@ -93,10 +95,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                                             it,
                                             genRStations(stations)
                                         ), true)
+                                    playerFragment = PlayerFragment(it)
                                     addFragment(
-                                        PlayerFragment(
-                                            it
-                                        )
+                                        playerFragment
                                     )
                                     binding.progressBar.visibility = View.GONE
                                     binding.bottomNavigation.selectedItemId = R.id.navigation_station
@@ -131,10 +132,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     fun genStations(stationsList: List<Station>): ArrayList<Item> {
         val list = arrayListOf<Item>()
-        val st = stationsList.mapIndexed { index, it ->
+        val st = stationsList.map {
             StationModel(
                 id = it.id,
-                index = index,
                 name = it.name ?: "",
                 imageUrl = it.imageUrl,
                 link = it.link
@@ -207,6 +207,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     override fun onDestroy() {
         super.onDestroy()
         unbindService(serviceConnection)
+        service.stop()
+        service.stopNotify()
     }
 
     private fun addFragment(fragment: Fragment, _show: Boolean = false) {
@@ -220,11 +222,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     private var backPressTime = 0L
     private lateinit var backPressToast: Toast
     override fun onBackPressed() {
+        if (playerFragment.showInfo) {
+            supportFragmentManager.fragments.forEach { (it as? IOnActivityStateChange)?.onBackPressed() }
+            return
+        }
         if (backPressTime + 2000 > System.currentTimeMillis()) {
             backPressToast.cancel()
             super.onBackPressed()
         } else {
-            supportFragmentManager.fragments.forEach { (it as? IOnActivityStateChange)?.onBackPressed() }
             backPressToast = Toast.makeText(this, "Нажмите еще раз для выхода", Toast.LENGTH_SHORT)
             backPressToast.show()
         }

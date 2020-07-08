@@ -108,6 +108,10 @@ class RadioService : Service(), EventListener, OnAudioFocusChangeListener {
             }
         }
 
+    fun stopNotify() {
+        notificationManager?.cancelNotify()
+    }
+
     override fun onCreate() {
         super.onCreate()
 
