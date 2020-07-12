@@ -27,7 +27,7 @@
                 android:id="@+id/noImage"
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
-                android:src="@drawable/ic_banner_image"
+                android:src="@drawable/ic_banner_placeholder"
                 />
 
             <androidx.viewpager.widget.ViewPager

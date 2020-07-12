@@ -27,6 +27,7 @@ import kotlinx.android.synthetic.main.fragment_station.*
 import kotlinx.coroutines.*
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.io.Reader
 import java.net.URL
 import java.util.*
 
@@ -165,7 +166,7 @@ class StationFragment(
                                             InputStreamReader(
                                                 URL("${url.split("?")[0]}.xspf")
                                                     .openStream()
-                                            )
+                                            ) as Reader?
                                         ).readLines().toString().replace("amp;", "")
                                         launch(Dispatchers.Main) {
                                             val metaSplit =

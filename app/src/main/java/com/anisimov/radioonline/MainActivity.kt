@@ -13,7 +13,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationManagerCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.anisimov.radioonline.databinding.ActivityMainBinding
@@ -24,8 +23,8 @@ import com.anisimov.radioonline.interfaces.IOnKeyDownEvent
 import com.anisimov.radioonline.interfaces.IOnKeyDownListener
 import com.anisimov.radioonline.item.models.Item
 import com.anisimov.radioonline.item.models.StationModel
-import com.anisimov.radioonline.radio.NOTIFICATION_ID
 import com.anisimov.radioonline.radio.RadioService
+import com.anisimov.radioonline.util.EstimateTimer
 import com.anisimov.requester.HttpResponseCallback
 import com.anisimov.requester.generateMode
 import com.anisimov.requester.generateModeList
@@ -40,6 +39,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.json.JSONObject
+import java.util.*
+import java.util.concurrent.TimeUnit
 import com.anisimov.requester.r.getHttpResponse as getRHttpResponse
 import com.anisimov.requester.r.models.Station as RStation
 
@@ -51,6 +52,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     private lateinit var service: RadioService
     private var audio: AudioManager? = null
     private lateinit var playerFragment: PlayerFragment
+
+    private var timer: Timer? = null
 
     private val serviceConnection = object : ServiceConnection {
 
@@ -72,7 +75,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                             addFragment(
                                 StationFragment(
                                     it,
-                                        genStations(stations)
+                                    genStations(stations)
                                 ), true
                             )
                             playerFragment = PlayerFragment(it)
@@ -94,13 +97,15 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                                         StationFragment(
                                             it,
                                             genRStations(stations)
-                                        ), true)
+                                        ), true
+                                    )
                                     playerFragment = PlayerFragment(it)
                                     addFragment(
                                         playerFragment
                                     )
                                     binding.progressBar.visibility = View.GONE
-                                    binding.bottomNavigation.selectedItemId = R.id.navigation_station
+                                    binding.bottomNavigation.selectedItemId =
+                                        R.id.navigation_station
                                 }
                             }
                         })
@@ -182,17 +187,19 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                     getHttpResponse("/authorize?token=${token}", object : HttpResponseCallback {
                         override fun onResponse(response: String) {
                             sp?.edit()?.apply {
-                                    putString("token", token)
-                                    val js = JSONObject(response)
-                                    if (js.has("authorize")) {
-                                        putLong("authorize", js.getLong("authorize"))
-                                    }
-                                    apply()
+                                putString("token", token)
+                                val js = JSONObject(response)
+                                if (js.has("authorize")) {
+                                    putLong("authorize", js.getLong("authorize"))
                                 }
+                                apply()
+                            }
                         }
                     })
                 }
             })
+
+        timer = EstimateTimer(this, TimeUnit.MINUTES.toMillis(30))
     }
 
     var sp: SharedPreferences? = null
@@ -209,6 +216,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         unbindService(serviceConnection)
         service.stop()
         service.stopNotify()
+        timer?.cancel()
     }
 
     private fun addFragment(fragment: Fragment, _show: Boolean = false) {

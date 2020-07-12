@@ -8,4 +8,5 @@
     <color name="bottomMenuItemCheckColor">#4F4F4F</color>
     <color name="playerButtonColor">#E0E0E0</color>
     <color name="progressBarColor">#FF8A65</color>
+    <color name="estimateButtonTextColor">#2196F3</color>
 </resources>

@@ -25,16 +25,25 @@
         <item name="android:shadowRadius">2</item>
     </style>
 
- <!--   <style name="LightTheme" parent="AppTheme">
-        <item name="textColor">#000000</item>
-        <item name="metaTextColor">#606060</item>
-        <item name="bgColor">#ffffff</item>
+
+    <style name="DialogButtonStyle" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/estimateButtonTextColor</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
     </style>
 
-    <style name="DarkTheme" parent="AppTheme">
-        <item name="textColor">#ffffff</item>
-        <item name="metaTextColor">#aeaeae</item>
-        <item name="bgColor">#000000</item>
-    </style>
--->
+
+    <!--   <style name="LightTheme" parent="AppTheme">
+           <item name="textColor">#000000</item>
+           <item name="metaTextColor">#606060</item>
+           <item name="bgColor">#ffffff</item>
+       </style>
+
+       <style name="DarkTheme" parent="AppTheme">
+           <item name="textColor">#ffffff</item>
+           <item name="metaTextColor">#aeaeae</item>
+           <item name="bgColor">#000000</item>
+       </style>
+   -->
 </resources>

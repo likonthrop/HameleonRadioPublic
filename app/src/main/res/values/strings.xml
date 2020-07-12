@@ -15,4 +15,8 @@
     <string name="station_name_def">Radio Online</string>
     <string name="track_history">история эфира</string>
     <string name="history">Плейлист »</string>
+    <string name="estimate_hameleon_radio">Оценить Hameleon Radio</string>
+    <string name="subtitle_estimate_hameleon_radio">Если вам нравится Hameleon Radio, не могли бы его оценить? Это займет лишь минуту. Благодарим за поддержку</string>
+    <string name="recall_later">Напомнить позже</string>
+    <string name="no_th">Нет, спасибо</string>
 </resources>
