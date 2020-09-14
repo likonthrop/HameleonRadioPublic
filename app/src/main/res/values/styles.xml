@@ -33,6 +33,17 @@
         <item name="android:background">?android:attr/selectableItemBackground</item>
     </style>
 
+    <style name="WhatNewActionButtonStyle" parent="TextAppearance.AppCompat.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+        <item name="layout_constraintEnd_toEndOf">parent</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:layout_marginStart">50dp</item>
+        <item name="android:layout_marginEnd">50dp</item>
+        <item name="android:backgroundTint">@color/colorWhatNewAction</item>
+    </style>
 
     <!--   <style name="LightTheme" parent="AppTheme">
            <item name="textColor">#000000</item>

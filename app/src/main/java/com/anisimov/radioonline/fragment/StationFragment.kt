@@ -334,8 +334,5 @@ class StationFragment(
     }
 
     override fun onClick(item: BannerModel, position: Int, v: View?) {
-        CoroutineScope(Dispatchers.Main).launch {
-            //            Toast.makeText(context, item.ling, Toast.LENGTH_SHORT).show()
-        }
     }
 }

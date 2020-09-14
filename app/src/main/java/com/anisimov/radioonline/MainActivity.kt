@@ -41,6 +41,7 @@ import org.greenrobot.eventbus.EventBus
 import org.json.JSONObject
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.sqrt
 import com.anisimov.requester.r.getHttpResponse as getRHttpResponse
 import com.anisimov.requester.r.models.Station as RStation
 
@@ -165,40 +166,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.bottomNavigation.setOnNavigationItemSelectedListener(this)
 
-        sp = getSharedPreferences("firebase_token", Context.MODE_PRIVATE)
-
-        FirebaseInstanceId.getInstance().instanceId
-            .addOnCompleteListener(OnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    return@OnCompleteListener
-                }
-                val token = task.result?.token
-                var saveToken = false
-
-                sp?.apply {
-                    val spToken = getString("token", "")
-                    val authorize = getLong("authorize", -1)
-                    if (token != spToken || authorize < 0) {
-                        saveToken = true
-                    }
-                }
-
-                if (saveToken) {
-                    getHttpResponse("/authorize?token=${token}", object : HttpResponseCallback {
-                        override fun onResponse(response: String) {
-                            sp?.edit()?.apply {
-                                putString("token", token)
-                                val js = JSONObject(response)
-                                if (js.has("authorize")) {
-                                    putLong("authorize", js.getLong("authorize"))
-                                }
-                                apply()
-                            }
-                        }
-                    })
-                }
-            })
-
+        //Запускает таймер (30 минут) для отображения диалога с просьбой оценить приложение в маркете
         timer = EstimateTimer(this, TimeUnit.MINUTES.toMillis(30))
     }
 

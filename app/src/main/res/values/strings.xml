@@ -19,4 +19,6 @@
     <string name="subtitle_estimate_hameleon_radio">Если вам нравится Hameleon Radio, не могли бы его оценить? Это займет лишь минуту. Благодарим за поддержку</string>
     <string name="recall_later">Напомнить позже</string>
     <string name="no_th">Нет, спасибо</string>
+    <string name="close">Закрыть</string>
+    <string name="what_new_description">Изображение нового функционала</string>
 </resources>

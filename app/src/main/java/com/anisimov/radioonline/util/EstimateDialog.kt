@@ -16,6 +16,9 @@ import java.util.*
 const val NOTIFY = "notify"
 const val ESTIMATE_SP = "estimate_sp"
 
+/**
+ * Диалоговое окно с предложением оценить приложение на маркете
+ * */
 class EstimateDialog(context: Context) : Dialog(context) {
     init {
         setContentView(R.layout.estimate_dialog_layout)
@@ -49,14 +52,22 @@ class EstimateDialog(context: Context) : Dialog(context) {
     }
 }
 
+/**
+ * Задача для таймера
+ * */
 class EstimateTimerTask(val context: Context): TimerTask() {
     override fun run() {
+            //Стартует Диалог с предложением оценить приложение
             Handler(Looper.getMainLooper()).post { EstimateDialog(context).show() }
     }
 }
 
+/**
+ * Таймер
+ * */
 class EstimateTimer(context: Context, delay: Long, name: String = "estimate_timer"): Timer(name) {
     init {
+        //Запускает задачу в случае если приложение не оценено
         if (context.getSharedPreferences(ESTIMATE_SP, Context.MODE_PRIVATE).getBoolean(NOTIFY, true)) {
             schedule(EstimateTimerTask(context), delay)
         }
