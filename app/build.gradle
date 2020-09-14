@@ -8,15 +8,6 @@ android {
     compileSdkVersion 30
     buildToolsVersion "29.0.3"
 
-    signingConfigs {
-        release {
-            storeFile file('/Users/Mac/OSProjects/zcor.ru')
-            storePassword '87338733'
-            keyAlias = 'zcor.ru'
-            keyPassword 'Lik128741500!'
-        }
-    }
-
     defaultConfig {
         applicationId "com.anisimov.radioonline"
         minSdkVersion 21
